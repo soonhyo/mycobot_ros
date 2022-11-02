@@ -1,0 +1,169 @@
+<launch>
+  <arg name="respeaker" default="true" />
+  <arg name="real_mode" default="false" />
+  <arg name="launch_respeaker" default="false" />
+  <arg name="launch_soundplay" default="false" />
+  <arg name="realsense_camera" default="true" />
+  <arg name="spherical_camera" default="false" />
+  <arg name="logging" default="false" />
+  <arg name="arm_interpolation" default="minjerk" />
+  <arg name="arm_control_mode" default="position_w_id" />
+  <arg name="moveit" default="true" />
+  <arg name="gui" default="true" />
+  <arg name="lgripper_type" default="softhand" />
+  <arg name="rgripper_type" default="softhand" />
+  <arg name="camera" default="realsense_torso"/>
+  <!-- avoid error of no gripper -->
+  <!-- arg name="rgripper_type" default="parallel" /-->
+  <!-- arg name="rgripper_type" default="softhand-v2" /-->
+  <arg name="launch_tabletop_detector" default="false" />
+  <!--arg name="launch_tabletop_detector" default="false" /-->
+  <arg name="mask" default="true"/>
+  <arg name="orientation" default="true"/>
+  <arg name="select_mask" default="true" /> 
+  <arg name="node_start_delay" default="0.0"/>
+  <arg name="CLOUD" default="/extract_indices_hair/output"/>
+  <arg name="comb_mode" default="true"/>
+  <arg name="orientation_mode" default="true"/>
+  <arg name="traj_mode" default="true"/>
+  
+  <include file="$(find eus_vive)/launch/baxter/baxter.launch" if="$(arg real_mode)">
+    <arg name="realsense_camera" value="$(arg realsense_camera)" />
+    <arg name="spherical_camera" value="$(arg spherical_camera)" />
+    <arg name="respeaker" value="$(arg respeaker)" />
+    <arg name="logging" value="$(arg logging)" />
+    <arg name="arm_interpolation" value="$(arg arm_interpolation)" />
+    <arg name="arm_control_mode" value="$(arg arm_control_mode)" />
+    <arg name="moveit" value="$(arg moveit)" />
+    <arg name="lgripper_type" value="$(arg lgripper_type)" />
+    <arg name="rgripper_type" value="$(arg rgripper_type)" />
+    <arg name="launch_tabletop_detector" value="$(arg launch_tabletop_detector)" />
+    
+  </include>
+  
+<include file="$(find respeaker_ros)/launch/sample_respeaker.launch" if="$(arg respeaker)">
+         <arg name="launch_respeaker" value="$(arg launch_respeaker)"/>
+         <arg name="launch_soundplay" value="$(arg launch_soundplay)"/>
+
+         </include>
+         
+
+<node type="serial_node.py" pkg="rosserial_python" name="comb_serial_node" if="$(arg comb_mode)">
+    <param name="~port" value="/dev/ttyACM0"/>
+</node>
+
+<node type="orientation_ros_gpu.py" pkg="baxter_haircut" name="hair_orientation" if="$(arg orientation_mode)">
+</node>
+
+<node type="ransac_ros.py" pkg="baxter_haircut" name="trajectory_for_comb_node" if="$(arg traj_mode)">
+  </node>   
+
+  <node type="hair_segmentation_node_v2.py" pkg="baxter_haircut" name="hair_pcl_mask" launch-prefix="bash -\c 'sleep $(arg node_start_delay); $0 $@'" if="$(arg mask)">                                       
+    <remap from="~input" to= "$(arg camera)/color/image_rect_color"/>
+  </node>      
+  
+  <node name="mask_image_filter_hair" pkg="jsk_pcl_ros" type="mask_image_filter">
+    <param name="~negative" value="false" />
+    <remap from="~input" to="$(arg camera)/depth_registered/quarter/points" if="$(arg real_mode)"/>
+    <remap from="~input" to="$(arg camera)/depth_registered/points" unless="$(arg real_mode)" />
+    <remap from="~input/mask" to="/hair_pcl_mask/output" unless="$(arg select_mask)"/>
+    <remap from="~input/mask" to="/hair_orientation/output/mask" if="$(arg select_mask)"/>
+    <!-- <remap from="~input/mask" to="/hair_pcl_selected_mask/output" if="$(arg select_mask)"/> -->
+    
+    <remap from="~input/camera_info" to="$(arg camera)/aligned_depth_to_color/camera_info" if="$(arg real_mode)"/>
+    <remap from="~input/camera_info" to="$(arg camera)/aligned_depth_to_color/compressed/camera_info" unless="$(arg real_mode)"/>
+        
+    </node>
+  <node name="extract_indices_hair" pkg="jsk_pcl_ros" type="extract_indices">                        
+    <remap from="~input" to="$(arg camera)/depth_registered/quarter/points" if="$(arg real_mode)"/>     <remap from="~input" to="$(arg camera)/depth_registered/points" unless="$(arg real_mode)" />                                 
+    <remap from="~indices" to="/mask_image_filter_hair/output" />
+    <remap from="~output" to="/extract_indices_hair/output"/>
+  </node>
+
+ <node name="multi_plane_estimate" pkg="nodelet" type="nodelet"
+       args="standalone jsk_pcl/OrganizedMultiPlaneSegmentation"
+       output="screen" >
+   <remap from="~input" to="$(arg CLOUD)" />
+   <rosparam>
+     max_curvature: 0.01
+     estimate_normal: true
+     min_size: 10000                                                                                                               
+   </rosparam>
+</node>
+
+<node name="polygon_magnifier" pkg="nodelet" type="nodelet"
+      args="standalone jsk_pcl_utils/PolygonMagnifier" output="screen">
+  <remap from="~input"
+      to="multi_plane_estimate/output_refined_polygon" />
+</node>
+
+<node name="plane_extraction" pkg="nodelet" type="nodelet"
+      args="standalone jsk_pcl/MultiPlaneExtraction"
+      output="screen" >
+  <remap from="~input" to="$(arg CLOUD)" />
+  <remap from="~indices" to="multi_plane_estimate/output_refined" />
+  <remap from="~input_polygons" to="multi_plane_estimate/output_refined_polygon" />
+  <remap from="~input_coefficients" to="multi_plane_estimate/output_refined_coefficients" />
+  <rosparam subst_value="true">
+    use_indices: true
+    use_sensor_frame: true
+    sensor_frame: base
+    min_height: 0.01
+    max_height: 1000.0
+    use_async: true
+    max_queue_size: 300
+  </rosparam>
+</node>
+  <node name="euclidean_clustering_hair" pkg="nodelet" type="nodelet"
+          args="standalone jsk_pcl/EuclideanClustering"
+          output="screen">
+
+    <remap from="~input" to="/extract_indices_hair/output" />
+    <rosparam>
+      tolerance: 0.02
+      min_size: 10
+      downsample_enable: true
+      leaf_size: 0.01
+    </rosparam>
+    
+
+  </node>         
+  <node name="segmentation_decomposer_hair" pkg="nodelet" type="nodelet"
+        args="standalone jsk_pcl/ClusterPointIndicesDecomposer"
+        output="screen" >
+    <remap from="~input" to="extract_indices_hair/output" />
+    <remap from="~target" to="euclidean_clustering_hair/output" />
+    <remap from="~align_planes" to="multi_plane_estimate/output_refined_polygon" />
+    <remap from="~align_planes_coefficients"
+           to="multi_plane_estimate/output_refined_coefficients" />
+    <rosparam subst_value="true">
+      use_pca: false
+      align_boxes: true
+      align_boxes_with_plane: false
+      target_frame_id: base
+      sort_by: cloud_size
+      publish_clouds: false
+      publish_tf: true
+      approximate_sync: true
+      queue_size: 300
+  </rosparam>                                                                                                                           </node>
+  <node name="$(anon rviz)" pkg="rviz" type="rviz" if="$(arg gui)"
+        args="-d $(find eus_vive)/rvizconfig/baxter/baxter_moveit.rviz">
+    <param name="/use_sim_time" value="true" />
+  </node>
+
+</launch>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
