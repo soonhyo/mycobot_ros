@@ -14,13 +14,12 @@ from sensor_msgs.msg import Image
 # from std_msgs.msg import Bool
 from std_msgs.msg import Int32, Int8, Int16MultiArray
 from sensor_msgs.msg import PointCloud2
-from baxter_haircut.msg import msg_std
+from mycobot_280.msg import msg_std
 import sensor_msgs.point_cloud2 as pc2
 from converter import numpy2i16multi 
 
 import math
 import numpy as np
-import cv2
 import sample_cef as coh
 import scipy.misc
 from scipy import ndimage
@@ -135,7 +134,7 @@ class OrientationNode(object):
         self.rate = rospy.Rate(30)
         self.input_size = rospy.get_param('~input_size', 512)
         # self.signal_loop = rospy.get_param('~signal_loop', True)
-        self.signal_loop = -1
+        self.signal_loop =-1
         self.pub = rospy.Publisher("~output", Image, queue_size=1)
         self.pub_std = rospy.Publisher("~output/std", msg_std, queue_size=1)
         self.pub_debug = rospy.Publisher("~output/debug", Image, queue_size=1)
@@ -175,7 +174,7 @@ class OrientationNode(object):
         self.minVal = 127
         self.maxVal = 255
 
-        self.max_iter_path = 15
+        self.max_iter_path = 10
         self.k = int(8*self.sc)
         self.p_0_y = int(20*self.sc)
         self.comb_offset = 1

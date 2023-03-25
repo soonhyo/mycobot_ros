@@ -21,13 +21,13 @@
 	<arg name="mask" default="true"/>
 
 	
-	<arg name="model" default="$(find mycobot_description)/urdf/mycobot/mycobot_for_hair.urdf.xacro"/>
+	<arg name="urdf_path" default="$(find mycobot_description)/urdf/mycobot/mycobot_for_hair.urdf.xacro"/>
 	<!-- <arg name="model" default="$(find mycobot_description)/urdf/mycobot/mycobot.urdf.xacro"/> -->
 
 	<arg name="rvizconfig" default="$(find mycobot_280)/config/mycobot.rviz" />
 	<arg name="gui" default="false" />
 
-	<param name="robot_description" command="$(find xacro)/xacro --inorder $(arg model)" />
+	<!-- <param name="robot_description" command="$(find xacro)/xacro -\-inorder $(arg model)" /> -->
 
 	<!-- Combinejoin values to TF -->
 	<!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" /> -->
@@ -48,6 +48,8 @@
 	<include file="$(find mycobot_communication)/launch/mycobot_interface.launch">
 	  <arg name="port" value="$(arg port)" />
 	  <arg name="baud" value="$(arg baud)" />
+          <arg name="urdf_path" value="$(arg urdf_path)" />
+
 	</include>
 
 	<node name="real_listener" pkg="mycobot_280" type="listen_real.py" />
@@ -57,13 +59,11 @@
 	<!-- </node> -->
 
 	<node type="orientation_ros_gpu.py" pkg="mycobot_280" name="hair_orientation" if="$(arg orientation_mode)">	</node>
+	<node type="ransac_ros_.py" pkg="mycobot_280" name="trajectory_for_comb_node" if="$(arg traj_mode)">	</node>
 
-	<node type="ransac_ros.py" pkg="mycobot_280" name="trajectory_for_comb_node" if="$(arg traj_mode)">	</node>   
-
-	<node type="hair_segmentation_node_v2.py" pkg="mycobot_280" name="hair_pcl_mask" if="$(arg mask)">                                       
+	<node type="hair_segmentation_node_v2.py" pkg="mycobot_280" name="hair_pcl_mask" if="$(arg mask)">
 	  <remap from="~input" to= "$(arg camera)/rgb/image_rect_color"/>
-	</node>      
-  
+	</node>
 	<include file="$(find openni_launch)/launch/openni.launch">
 	  <arg name="camera"                          value="$(arg camera)"/>
 	  <arg name="depth_registration"              value="$(arg depth_registration"/>

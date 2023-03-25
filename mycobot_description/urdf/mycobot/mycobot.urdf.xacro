@@ -152,13 +152,12 @@
   </link>
 
   <link name="camera_link"/>
-  
+ 
   <joint name="camera" type="fixed">
       <parent link="link1"/>
       <child link="camera_link"/>
       <origin xyz = "0.36 0 0.57 " rpy = "0 0 0"/>
   </joint>
-  
   <joint name="joint1" type="revolute">
     <axis xyz="0 0 1"/>
     <limit effort = "10.0" lower = "${-pi}" upper = "${pi}" velocity = "1.0"/>

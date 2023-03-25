@@ -58,7 +58,7 @@ class HairSegmentationNode(object):
 
         model_path = rospy.get_param(
             '~model_path',
-            self.rospack.get_path('baxter_haircut') + \
+            self.rospack.get_path('mycobot_280') + \
             '/model/DeepLabV3Plus(timm-mobilenetv3_small_100)_452_2.16M_0.8385/best_model_simplifier.onnx')
         self.score_thresh = rospy.get_param('~score_thresh', 0.3)
         self.input_size = rospy.get_param('~input_size', 512)
@@ -74,8 +74,8 @@ class HairSegmentationNode(object):
                
         self.sub = rospy.Subscriber(
             "~input", Image, self.process_image)
-        self.kernel_e = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (71,71))
-        self.kernel_d = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (21,21))
+        self.kernel_e = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5,5))
+        self.kernel_d = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3,3))
 
         rospy.loginfo('hair segmentation node started')
 

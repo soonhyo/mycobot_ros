@@ -62,13 +62,12 @@ class TrajectoryHair(object):
         #self.pub_path =rospy.Publisher("~output/path", PointCloud2, queue_size=1)
         self.pub_pose_array =rospy.Publisher("~output/pose_array", PoseArray, queue_size=1)
         self.bridge = CvBridge()
-        self.all_viz =False
-        
+        self.all_viz = True
+
     def ransac_sphere(self, pcd):
         sph = pyrsc.Sphere()
         center, radius, inliers = sph.fit(np.asarray(pcd.points), thresh=0.01)
         return center, radius, inliers
-    
     def ransac_plane(self, pcd, viz):
         plane_model, inliers = pcd.segment_plane(distance_threshold=0.01,
                                                          ransac_n=3,

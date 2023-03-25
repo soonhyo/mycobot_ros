@@ -1,6 +1,13 @@
 import numpy as np
-import cv2
-
+import sys
+import os
+# OpenCV import for python3
+if os.environ['ROS_PYTHON_VERSION'] == '3':
+    import cv2
+else:
+    sys.path.remove('/opt/ros/{}/lib/python2.7/dist-packages'.format(os.getenv('ROS_DISTRO')))  # NOQA
+    import cv2  # NOQA
+    sys.path.append('/opt/ros/{}/lib/python2.7/dist-packages'.format(os.getenv('ROS_DISTRO')))  # NOQA
 def coherence_filter (img, sigma = 3, str_sigma = 15, blend = 0.9, iter_n = 4,gray_on =1 ):
     h, w = img.shape [: 2]
 

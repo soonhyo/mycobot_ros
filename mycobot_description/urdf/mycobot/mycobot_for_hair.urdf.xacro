@@ -156,7 +156,7 @@
   <joint name="camera" type="fixed">
       <parent link="link1"/>
       <child link="camera_link"/>
-      <origin xyz = "0.25 -0.035 0.54 " rpy = "${pi} ${pi/2} 0"/>
+      <origin xyz = "0.44 0.048 0.27 " rpy = "0 0 ${-pi}"/>
   </joint>
   
   <joint name="joint1" type="revolute">
