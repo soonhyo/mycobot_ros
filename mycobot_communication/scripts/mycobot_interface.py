@@ -5,8 +5,11 @@ import sys
 import signal
 import threading
 import math
-from itertools import izip_longest # TODO: python3 is zip_longest
-zip_longest = izip_longest
+if sys.version_info < (3,0):
+    from itertools import izip_longest # TODO: python3 is zip_longest
+    zip_longest = izip_longest
+else:
+    from itertools import zip_longest
 
 from pymycobot.mycobot import MyCobot
 

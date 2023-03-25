@@ -1,0 +1,1 @@
+<include filename="$(find my_package)/urdf/my_robot.xacro" />
