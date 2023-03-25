@@ -7,14 +7,28 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  geometry_msgs
   actionlib
+  actionlib_msgs
   image_transport
   cv_bridge
+  message_generation
 )
 
+## Generate messages in the 'msg' folder
+add_message_files(
+     FILES
+     msg_std.msg
+ )
+
+generate_messages(
+     DEPENDENCIES
+     std_msgs
+)
 ## Declare a catkin package
 catkin_package(
-  CATKIN_DEPENDS std_msgs actionlib
+        LIBRARIES mycobot_280
+        CATKIN_DEPENDS std_msgs actionlib geometry_msgs message_generation message_runtime actionlib_msgs
 )
 
 ## Build talker and listener

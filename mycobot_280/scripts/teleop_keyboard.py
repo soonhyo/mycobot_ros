@@ -68,7 +68,7 @@ def teleop_keyboard():
     rospy.wait_for_service("get_joint_coords")
     rospy.wait_for_service("set_joint_coords")
     rospy.wait_for_service("switch_gripper_status")
-    print("service ready.")
+    rospy.loginfo("service ready.")
     try:
         get_coords = rospy.ServiceProxy("get_joint_coords", GetCoords)
         set_coords = rospy.ServiceProxy("set_joint_coords", SetCoords)
@@ -77,7 +77,7 @@ def teleop_keyboard():
         switch_gripper = rospy.ServiceProxy(
             "switch_gripper_status", GripperStatus)
     except:
-        print("start error ...")
+        rospy.loginfo("start error ...")
         exit(1)
 
     init_pose = [0, 0, 0, 0, 0, 0, speed]
@@ -92,11 +92,11 @@ def teleop_keyboard():
         time.sleep(0.1)
 
     record_coords = [res.x, res.y, res.z, res.rx, res.ry, res.rz, speed, model]
-    print(record_coords)
+    rospy.loginfo(record_coords)
 
     try:
-        print(msg)
-        print(vels(speed, change_percent))
+        rospy.loginfo(msg)
+        rospy.loginfo(vels(speed, change_percent))
         while 1:
             try:
                 # print("\r current coords: %s" % record_coords, end="")

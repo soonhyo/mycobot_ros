@@ -2,7 +2,7 @@
 	<arg name="port" default="/dev/ttyUSB0" />
 	<arg name="baud" default="115200" />
 
-	<arg name="model" default="$(find mycobot_description)/urdf/mycobot/mycobot_urdf.urdf"/>
+	<arg name="model" default="$(find mycobot_description)/urdf/mycobot/mycobot_for_hair.urdf.xacro"/>
 	<arg name="rvizconfig" default="$(find mycobot_280)/config/mycobot.rviz" />
 	<arg name="gui" default="false" />
 
@@ -13,6 +13,8 @@
 	<!-- Show in Rviz -->
 	<node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
 
+	<node name="teleoperation" pkg="mycobot_280" type="teleop_keyboard.py" />
+	
     <include file="$(find mycobot_communication)/launch/communication_service.launch">
 		<arg name="port" value="$(arg port)" />	
 		<arg name="baud" value="$(arg baud)" />	
