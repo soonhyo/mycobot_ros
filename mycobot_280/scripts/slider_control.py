@@ -13,7 +13,7 @@ import rospy
 from sensor_msgs.msg import JointState
 
 from pymycobot.mycobot import MyCobot
-
+import time
 
 mc = None
 
@@ -26,7 +26,7 @@ def callback(data):
         data_list.append(value)
 
     mc.send_radians(data_list, 80)
-    # time.sleep(0.5)
+    time.sleep(0.5)
 
 
 def listener():

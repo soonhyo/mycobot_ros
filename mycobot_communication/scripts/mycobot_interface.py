@@ -87,8 +87,18 @@ class MycobotInterface(object):
                 msg.header.stamp = rospy.get_rostime()
 
                 for i, ang in enumerate(self.real_angles):
-                   msg.name.append('joint' + str(i+1))
-                   msg.position.append(ang / 180.0 * math.pi)
+                    if (i+1) == len(self.real_angles): #last robot joint
+                        msg.name.append('joint' + str(i+1)+'output_to_'+'joint'+str(i+1))
+                    else:
+                        msg.name.append('joint' + str(i+2)+'_to_'+'joint'+str(i+1))
+                    # if (i+1) == (len(self.real_angles) -1): #last robot joint
+                    #     msg.name.append('joint' + str(i+1)+'output_to_'+'joint'+str(i+1))
+                    # else if (i+1) < (len(self.real_angles) -1):
+                    #     msg.name.append('joint' + str(i+2)+'_to_'+'joint'+str(i+1))
+                    # else:
+                    #     msg.name.append('end_effector')
+
+                    msg.position.append(ang / 180.0 * math.pi)
                 self.joint_angle_pub.publish(msg)
 
             # get gripper state

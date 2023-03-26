@@ -14,8 +14,10 @@
   </node>
 
   <!-- robot state publisher for tf -->
-  <param name="robot_description" command="$(find xacro)/xacro '$(arg urdf_path)'" />
+  <!-- <param name="robot_description" command="$(find xacro)/xacro '$(arg urdf_path)'" /> -->
   <!-- <param name="robot_description" command="cat $(arg urdf_path)" /> -->
+  <param name="robot_description" textfile="$(arg urdf_path)" />
+
   <node name="$(anon robot_state_publisher)" pkg="robot_state_publisher" type="robot_state_publisher" />
 
 </launch>
