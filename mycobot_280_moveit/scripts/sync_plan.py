@@ -24,7 +24,7 @@ def listener():
     global mc
     rospy.init_node("mycobot_reciver", anonymous=True)
 
-    port = rospy.get_param("~port", "/dev/ttyUSB0")
+    port = rospy.get_param("~port", "/dev/mycobot")
     baud = rospy.get_param("~baud", 115200)
     print(port, baud)
     mc = MyCobot(port, baud)

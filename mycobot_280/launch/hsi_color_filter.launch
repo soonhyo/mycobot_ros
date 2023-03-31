@@ -1,0 +1,30 @@
+<launch>
+  <arg name="gui" default="true"/>
+  <arg name="INPUT" default="/camera/depth_registered/points"/>
+
+  <arg name="file_name" value="$(find jsk_pcl_ros_samples)/pcd/region_growing_rgb_tutorial.pcd"/>
+
+  <arg name="rate" value="0.1"/>
+  <!-- <node pkg="pcl_ros" type="pcd_to_pointcloud" name="pcd_to_pointcloud" args="$(arg file_name) $(arg rate)" output="screen"> -->
+  <!-- 	<remap from="cloud_pcd" to="hsi_color_filter/points"/> -->
+  <!-- 	<param name="frame_id" value="joint1" /> -->
+  <!-- </node> -->
+
+  <include file="$(find jsk_pcl_ros)/launch/hsi_color_filter.launch">
+    <arg name="DEFAULT_NAMESPACE" value="hsi_color_filter"/>
+    <arg name="INPUT" value="$(arg INPUT)"/>
+    <arg name="h_max" default="-64" />
+    <arg name="h_min" default="-128" />
+    <arg name="s_max" default="255" />
+    <arg name="s_min" default="231" />
+    <arg name="i_max" default="121" />
+    <arg name="i_min" default="62" />
+
+  </include>
+
+  <group if="$(arg gui)">
+    <node name="rviz"
+          pkg="rviz" type="rviz"
+          args="-d $(find jsk_pcl_ros_samples)/rviz/hsi_color_filter.rviz"/>
+  </group>
+</launch>

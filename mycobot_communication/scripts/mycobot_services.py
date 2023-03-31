@@ -2,7 +2,7 @@
 import time
 import rospy
 from mycobot_communication.srv import *
-
+import threading
 from pymycobot.mycobot import MyCobot
 
 mc = None
@@ -10,6 +10,8 @@ mc = None
 
 def create_handle():
     global mc
+    global lock
+    lock = threading.Lock()
     rospy.init_node("mycobot_services")
     rospy.loginfo("start ...")
     port = rospy.get_param("~port")
@@ -41,14 +43,18 @@ def set_angles(req):
     sp = req.speed
 
     if mc:
+        lock.acquire()
         mc.send_angles(angles, sp)
-
+        lock.release()
     return SetAnglesResponse(True)
 
 
 def get_angles(req):
     if mc:
+        lock.acquire()
         angles = mc.get_angles()
+        lock.release()
+
         return GetAnglesResponse(*angles)
 
 
@@ -65,36 +71,41 @@ def set_coords(req):
     mod = req.model
 
     if mc:
+        lock.acquire()
         mc.send_coords(coords, sp, mod)
-
+        lock.release()
     return SetCoordsResponse(True)
 
 
 def get_coords(req):
     if mc:
+        lock.acquire()
         coords = mc.get_coords()
+        lock.release()
         return GetCoordsResponse(*coords)
 
 
 def switch_status(req):
     if mc:
+        lock.acquire()
         if req.Status:
             mc.set_gripper_state(0, 80)
         else:
             mc.set_gripper_state(1, 80)
-
+        lock.release()
     return GripperStatusResponse(True)
 
 
 def toggle_pump(req):
     if mc:
+        lock.acquire()
         if req.Status:
             mc.set_basic_output(2, 0)
             mc.set_basic_output(5, 0)
         else:
             mc.set_basic_output(2, 1)
             mc.set_basic_output(5, 1)
-
+        lock.release()
     return PumpStatusResponse(True)
 
 
@@ -126,6 +137,7 @@ def output_robot_message():
     atom_version = "unknown"
 
     if mc:
+        lock.acquire()
         cn = mc.is_controller_connected()
         if cn == 1:
             connect_status = True
@@ -133,7 +145,7 @@ def output_robot_message():
         si = mc.is_all_servo_enable()
         if si == 1:
             servo_infomation = "all connected"
-
+        lock.release()
     print(
         robot_msg % (connect_status, servo_infomation, servo_temperature, atom_version)
     )

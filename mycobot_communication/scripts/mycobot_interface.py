@@ -3,6 +3,7 @@ import time
 import os
 import sys
 import signal
+import serial
 import threading
 import math
 if sys.version_info < (3,0):
@@ -22,18 +23,22 @@ from std_srvs.srv import SetBool, SetBoolResponse, Empty
 import tf
 import numpy as np
 
+from mycobot_communication.srv import *
 
 class MycobotInterface(object):
 
     def __init__(self):
         port = rospy.get_param("~port", "/dev/ttyUSB0")
         baud = rospy.get_param("~baud", 115200)
+        debug_onoff = rospy.get_param("~mycobot_debug",True)
         self.model = rospy.get_param("~model", '280')
         self.vel_rate = rospy.get_param("~vel_rate", 32.0) # bit/rad
         self.min_vel = rospy.get_param("~min_vel", 10) # bit, for the bad velocity tracking of mycobot.
         rospy.loginfo("Connect mycobot on %s,%s" % (port, baud))
-        self.mc = MyCobot(port, baud)
+        self.mc = MyCobot(port, baud, debug=debug_onoff)
         self.lock = threading.Lock()
+
+        self.set_srv =[]
 
         self.joint_angle_pub = rospy.Publisher("joint_states", JointState, queue_size=5)
         self.real_angles = None
@@ -60,73 +65,178 @@ class MycobotInterface(object):
         self.gripper_as = actionlib.SimpleActionServer("gripper_controller/gripper_command", GripperCommandAction, execute_cb=self.gripper_as_cb)
         self.gripper_as.start()
 
+        # service server
+        self.create_services()
     def run(self):
 
         r = rospy.Rate(rospy.get_param("~joint_state_rate", 20.0)) # hz
-
         while not rospy.is_shutdown():
-
-            # get real joint from MyCobot
-            if self.get_joint_state:
-                real_angles = self.mc.get_angles()
-
-                # the duration is over the sending loop, not good
-                # self.lock.acquire()
-                # real_angles = self.mc.get_angles()
-                # self.lock.release()
-
-                if len(real_angles) != 6: # we assume mycobot only have 6 DoF of joints
-                    rospy.logwarn("empty joint angles!!!")
-                else:
-                    self.real_angles = real_angles
-
-            if self.real_angles:
-                rospy.logdebug_throttle(1.0, "get real angles from mycobot")
-
-                msg = JointState()
-                msg.header.stamp = rospy.get_rostime()
-
-                for i, ang in enumerate(self.real_angles):
-                    if (i+1) == len(self.real_angles): #last robot joint
-                        msg.name.append('joint' + str(i+1)+'output_to_'+'joint'+str(i+1))
+            try:        
+                # get real joint from MyCobot
+                self.lock.acquire()
+                if self.mc.is_moving():
+                    self.lock.release()
+                    continue
+                self.lock.release()
+                if self.get_joint_state:
+                    # real_angles = self.mc.get_angles()
+                    # the duration is over the sending loop, not good
+                    self.lock.acquire()
+                    real_angles = self.mc.get_angles()
+                    self.lock.release()
+                    
+                    if len(real_angles) != 6: # we assume mycobot only have 6 DoF of joints
+                        rospy.logwarn("empty joint angles!!!")
+                        rospy.loginfo("real_angles error "+ str(real_angles))
                     else:
-                        msg.name.append('joint' + str(i+2)+'_to_'+'joint'+str(i+1))
-                    # if (i+1) == (len(self.real_angles) -1): #last robot joint
-                    #     msg.name.append('joint' + str(i+1)+'output_to_'+'joint'+str(i+1))
-                    # else if (i+1) < (len(self.real_angles) -1):
-                    #     msg.name.append('joint' + str(i+2)+'_to_'+'joint'+str(i+1))
-                    # else:
-                    #     msg.name.append('end_effector')
+                        self.real_angles = real_angles
 
-                    msg.position.append(ang / 180.0 * math.pi)
-                self.joint_angle_pub.publish(msg)
+                if self.real_angles:
+                    rospy.logdebug_throttle(1.0, "get real angles from mycobot")
 
-            # get gripper state
-            # Note: we only retreive the gripper state when doing the grasp action.
-            # We find following polling function will cause the failure of get_angles() for Mycobot Pro 320.
-            # This makes the publish of joint state decrease from 20Hz to 2Hz for MyCobot Pro 320.
-            if self.get_gripper_state:
-                self.gripper_is_moving = self.mc.is_gripper_moving()
-                self.gripper_value = self.mc.get_gripper_value()
-
-
-            # get end-effector if necessary (use tf by ros in default)
-            if self.pub_end_coord:
-                coords = self.mc.get_coords()
-                if coords:
-                    msg = PoseStamped
+                    msg = JointState()
                     msg.header.stamp = rospy.get_rostime()
-                    msg.pose.position.x = coords[0]
-                    msg.pose.position.y = coords[1]
-                    msg.pose.position.z = coords[2]
-                    q = tf.transformations.quaternion_from_euler(coords[3], coords[4], coords[5])
-                    msg.poseq.quaternion.x = q[0]
-                    msg.poseq.quaternion.y = q[1]
-                    msg.poseq.quaternion.z = q[2]
-                    msg.poseq.quaternion.w = q[3]
-                    self.end_coord_pub.publish(msg)
 
-            r.sleep()
+                    for i, ang in enumerate(self.real_angles):
+                        if (i+1) == len(self.real_angles): #last robot joint
+                            msg.name.append('joint' + str(i+1)+'output_to_'+'joint'+str(i+1))
+                        else:
+                            msg.name.append('joint' + str(i+2)+'_to_'+'joint'+str(i+1))
+                        # if (i+1) == (len(self.real_angles) -1): #last robot joint
+                        #     msg.name.append('joint' + str(i+1)+'output_to_'+'joint'+str(i+1))
+                        # else if (i+1) < (len(self.real_angles) -1):
+                        #     msg.name.append('joint' + str(i+2)+'_to_'+'joint'+str(i+1))
+                        # else:
+                        #     msg.name.append('end_effector')
+
+                        msg.position.append(ang / 180.0 * math.pi)
+                    self.joint_angle_pub.publish(msg)
+
+                # get gripper state
+                # Note: we only retreive the gripper state when doing the grasp action.
+                # We find following polling function will cause the failure of get_angles() for Mycobot Pro 320.
+                # This makes the publish of joint state decrease from 20Hz to 2Hz for MyCobot Pro 320.
+                if self.get_gripper_state:
+                    self.gripper_is_moving = self.mc.is_gripper_moving()
+                    self.gripper_value = self.mc.get_gripper_value()
+
+
+                # get end-effector if necessary (use tf by ros in default)
+                if self.pub_end_coord:
+                    coords = self.mc.get_coords()
+                    if coords:
+                        msg = PoseStamped
+                        msg.header.stamp = rospy.get_rostime()
+                        msg.pose.position.x = coords[0]
+                        msg.pose.position.y = coords[1]
+                        msg.pose.position.z = coords[2]
+                        q = tf.transformations.quaternion_from_euler(coords[3], coords[4], coords[5])
+                        msg.poseq.quaternion.x = q[0]
+                        msg.poseq.quaternion.y = q[1]
+                        msg.poseq.quaternion.z = q[2]
+                        msg.poseq.quaternion.w = q[3]
+                        self.end_coord_pub.publish(msg)
+
+                r.sleep()
+            except serial.serialutil.SerialException as e:
+                rospy.logerr(e)
+                if self.mc.is_power_on() == 0:
+                    rospy.loginfo("Atom is down, repower on the atom")
+                    self.mc.power_on()
+                    time.sleep(0.1)
+                    if self.mc.is_power_on() == 1:
+                        rospy.loginfo("Atom is powered on")
+                    else:
+                        rospy.loginfo("Atom is not powered on")
+                        break
+                continue
+
+    def create_services(self):
+        rospy.Service("set_joint_angles", SetAngles, self.set_angles)
+        rospy.Service("get_joint_angles", GetAngles, self.get_angles)
+        rospy.Service("set_joint_coords", SetCoords, self.set_coords)
+        rospy.Service("get_joint_coords", GetCoords, self.get_coords)
+        rospy.Service("switch_gripper_status", GripperStatus, self.switch_status)
+        rospy.Service("switch_pump_status", PumpStatus, self.toggle_pump)
+        rospy.loginfo("services server ready")
+        
+    def set_angles(self,req):
+        angles = [
+            req.joint_1,
+            req.joint_2,
+            req.joint_3,
+            req.joint_4,
+            req.joint_5,
+            req.joint_6,
+        ]
+        sp = req.speed
+
+        if self.mc:
+            self.lock.acquire()
+            self.mc.send_angles(angles, sp)
+            self.lock.release()
+
+
+        return SetAnglesResponse(True)
+
+
+    def get_angles(self, req):
+        if self.mc:
+            self.lock.acquire()
+            angles = self.mc.get_angles()
+            self.lock.release()
+            return GetAnglesResponse(*angles)
+
+
+    def set_coords(self, req):
+        coords = [
+            req.x,
+            req.y,
+            req.z,
+            req.rx,
+            req.ry,
+            req.rz,
+        ]
+        sp = req.speed
+        mod = req.model
+        # data = [coords, sp, mod]
+        if self.mc:
+            self.lock.acquire()
+            rospy.sleep(0.5)
+            self.mc.send_coords(coords, sp, mod)
+            self.lock.release()
+        # self.set_srv = data
+        return SetCoordsResponse(True)
+
+
+    def get_coords(self, req):
+        if self.mc:
+            self.lock.acquire()
+            coords = self.mc.get_coords()
+            self.lock.release()
+            return GetCoordsResponse(*coords)
+
+    def switch_status(self, req):
+        if self.mc:
+            self.lock.acquire()
+            if req.Status:
+                self.mc.set_gripper_state(0, 80)
+            else:
+                self.mc.set_gripper_state(1, 80)
+            self.lock.release()
+        return GripperStatusResponse(True)
+
+    def toggle_pump(self, req):
+        if self.mc:
+            self.lock.acquire()
+            if req.Status:
+                self.mc.set_basic_output(2, 0)
+                self.mc.set_basic_output(5, 0)
+            else:
+                self.mc.set_basic_output(2, 1)
+                self.mc.set_basic_output(5, 1)
+            self.lock.release()
+        return PumpStatusResponse(True)
 
     def joint_command_cb(self, msg):
         angles = self.real_angles
@@ -330,7 +440,6 @@ class MycobotInterface(object):
 
                     self.get_joint_state = True
                     return;
-
 
                 if (time - feedback.header.stamp).to_sec() > 0.1: # 10 Hz
 

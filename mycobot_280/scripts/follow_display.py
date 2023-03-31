@@ -52,7 +52,7 @@ def talker():
     joint_state_send.effort = []
 
     marker_ = Marker()
-    marker_.header.frame_id = "/joint1"
+    marker_.header.frame_id = "joint1"
     marker_.ns = "my_namespace"
 
     print("publishing ...")
@@ -80,13 +80,13 @@ def talker():
         marker_.scale.z = 0.04
 
         # marker position initial
-        # print(coords)
+        print(coords)
         if not coords:
             coords = [0, 0, 0, 0, 0, 0]
             rospy.loginfo("error [101]: can not get coord values")
 
-        marker_.pose.position.x = coords[1] / 1000 * -1
-        marker_.pose.position.y = coords[0] / 1000
+        marker_.pose.position.x = coords[0] / 1000
+        marker_.pose.position.y = coords[1] / 1000
         marker_.pose.position.z = coords[2] / 1000
 
         marker_.color.a = 1.0
