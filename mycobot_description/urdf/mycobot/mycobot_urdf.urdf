@@ -2,13 +2,13 @@
 <robot  xmlns:xacro="http://www.ros.org/wiki/xacro" name="mycobot" >
   <xacro:arg name="use_nominal_extrinsics" default="false"/>
 
-  <xacro:property name="width" value=".2" />
-  <xacro:include filename="$(find realsense2_description)/urdf/_d435i.urdf.xacro" />
+  <!-- <xacro:property name="width" value=".2" /> -->
+  <!-- <xacro:include filename="$(find realsense2_description)/urdf/_d435i.urdf.xacro" /> -->
 
-  <xacro:sensor_d435i parent="joint1" name="camera" use_nominal_extrinsics="$(arg use_nominal_extrinsics)">
-    <origin xyz="0.48 0 0.287" rpy="0 ${pi/4} -${pi}"/>
+  <!-- <xacro:sensor_d435i parent="joint1" name="camera" use_nominal_extrinsics="$(arg use_nominal_extrinsics)"> -->
+  <!--   <origin xyz="0.48 0 0.287" rpy="0 ${pi/4} -${pi}"/> -->
 
-  </xacro:sensor_d435i>
+  <!-- </xacro:sensor_d435i> -->
 
   <link name="joint1">
     <visual>
