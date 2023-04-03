@@ -1,6 +1,7 @@
 <launch>
   <arg name="port" default="/dev/ttyUSB0" doc ="the serial port for connection" />
   <arg name="baud" default="115200" doc ="the serial baudrate" />
+  <arg name="debug" default="false"/>
   <arg name="robot_type" default="mycobot"/>
   <!-- <arg name="urdf_path" default="$(find mycobot_description)/urdf/$(arg robot_type)/mycobot.urdf.xacro"/> -->
   <!-- <arg name="urdf_path" default="$(find mycobot_description)/urdf/$(arg robot_type)/mycobot_with_d435i.urdf.xacro"/> -->
@@ -11,6 +12,7 @@
     <param name="port" value="$(arg port)" />
     <param name="baud" value="$(arg baud)" />
     <param name="model" value="$(arg robot_type)" />
+    <param name="mycobot_debug" value="$(arg debug)" />
   </node>
 
   <!-- robot state publisher for tf -->
