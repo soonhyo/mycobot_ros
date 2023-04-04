@@ -24,6 +24,7 @@ import tf
 import numpy as np
 
 from mycobot_communication.srv import *
+from mycobot_communication.msg import *
 
 class MycobotInterface(object):
 
@@ -67,6 +68,9 @@ class MycobotInterface(object):
 
         # service server
         self.create_services()
+
+        # action server
+        self.create_action_servers()
     def run(self):
 
         r = rospy.Rate(rospy.get_param("~joint_state_rate", 20.0)) # hz
@@ -151,6 +155,14 @@ class MycobotInterface(object):
                         break
                 continue
 
+    def create_action_servers(self):
+        # self.joint_comm_action_server = actionlib.SimpleActionServer('joint_comm_action_server', JointCommAction, self.joint_comm_action_cb)
+        self.coords_comm_action_server = actionlib.SimpleActionServer('coords_comm_action_server', CoordsCommAction, self.coords_comm_action_cb)
+
+        # self.joint_comm_action_server.start()
+        self.coords_comm_action_server.start()
+
+
     def create_services(self):
         rospy.Service("set_joint_angles", SetAngles, self.set_angles)
         rospy.Service("get_joint_angles", GetAngles, self.get_angles)
@@ -206,7 +218,27 @@ class MycobotInterface(object):
             self.mc.send_coords(coords, sp, mod)
             self.lock.release()
         # self.set_srv = data
-        return SetCoordsResponse(True)
+
+    def coords_comm_action_cb(self, req):
+        coords = [
+            req.x,
+            req.y,
+            req.z,
+            req.rx,
+            req.ry,
+            req.rz,
+        ]
+        sp = req.speed
+        mod = req.model
+        # data = [coords, sp, mod]
+        if self.mc:
+            self.lock.acquire()
+            self.mc.send_coords(coords, sp, mod)
+            self.lock.release()
+        # self.set_srv = data
+        result_msg = CoordsCommResult()
+        result_msg.Flag = True
+        return self.coords_comm_action_server.set_succeeded(result=result_msg)
 
 
     def get_coords(self, req):
@@ -255,8 +287,34 @@ class MycobotInterface(object):
 
         print(angles, vel)
         self.lock.acquire()
+        result = self.mc.send_angles(angles, vel)
+        self.lock.release()
+
+    def joint_comm_action_cb(self, msg):
+        angles = self.real_angles
+        vel = 50 # deg/s, hard-coding
+        for n, p, v in zip_longest(msg.name, msg.position, msg.velocity):
+            id = int(n[-1]) - 1
+            if 'joint' in n and id >= 0 and id < len(angles):
+                if math.fabs(p) < 190.0 / 180 * math.pi: # 190 should be  retrieved from API
+                    angles[id] = p * 180 / math.pi
+                else:
+                    rospy.logwarn("%s exceeds the limit, %f", n, p)
+            if v:
+                v=  v * 180 / math.pi
+                if v < vel:
+                    vel = v
+
+
+        print(angles, vel)
+        self.lock.acquire()
         self.mc.send_angles(angles, vel)
         self.lock.release()
+        result = True
+        result_msg = JointCommResult()
+        result_msg.result = result
+
+        self.joint_comm_action_server.set_succeeded(result=result_msg)
 
     def set_servo_cb(self, req):
         if req.data:
