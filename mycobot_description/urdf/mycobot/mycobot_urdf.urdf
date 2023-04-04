@@ -5,12 +5,12 @@
   <xacro:property name="width" value=".2" />
   <xacro:include filename="$(find realsense2_description)/urdf/_d435i.urdf.xacro" />
 
-  <xacro:sensor_d435i parent="joint1" name="camera" use_nominal_extrinsics="$(arg use_nominal_extrinsics)">
+  <xacro:sensor_d435i parent="link1" name="camera" use_nominal_extrinsics="$(arg use_nominal_extrinsics)">
     <origin xyz="0.495 0 0.243" rpy="0 ${pi/4} -${pi}"/>
 
   </xacro:sensor_d435i>
 
-  <link name="joint1">
+  <link name="link1">
     <visual>
       <geometry>
 	     <!--- 0.0 0 -0.04  1.5708 3.14159-->
@@ -27,7 +27,7 @@
     </collision>
   </link>
 
-  <link name="joint2">
+  <link name="link2">
     <visual>
       <geometry>
        <mesh filename="package://mycobot_description/urdf/mycobot/joint2.dae"/>
@@ -43,7 +43,7 @@
   </link>
 
 
-  <link name="joint3">
+  <link name="link3">
     <visual>
       <geometry>
        <mesh filename="package://mycobot_description/urdf/mycobot/joint3.dae"/>
@@ -59,7 +59,7 @@
   </link>
 
 
-  <link name="joint4">
+  <link name="link4">
     <visual>
       <geometry>
        <!--- 0.0 0 -0.04 -->
@@ -77,7 +77,7 @@
   </link>
 
 
-  <link name="joint5">
+  <link name="link5">
     <visual>
       <geometry>
        <!--- 0.0 0 -0.04 -->
@@ -95,7 +95,7 @@
   </link>
 
 
-  <link name="joint6">
+  <link name="link6">
     <visual>
       <geometry>
        <!--- 0.0 0 -0.04 -->
@@ -113,7 +113,7 @@
   </link>
 
 
-  <link name="joint6_flange">
+  <link name="link7">
     <visual>
       <geometry>
        <!--- 0.0 0 -0.04 -->
@@ -138,62 +138,62 @@
 
 
 
-  <joint name="joint2_to_joint1" type="revolute">
+  <joint name="joint1" type="revolute">
     <axis xyz="0 0 1"/>
     <limit effort = "1000.0" lower = "-3.14" upper = "3.14159" velocity = "0"/>
-    <parent link="joint1"/>
-    <child link="joint2"/>
+    <parent link="link1"/>
+    <child link="link2"/>
     <origin xyz= "0 0 0.13156" rpy = "0 0 0"/>  
   </joint>
 
 
-  <joint name="joint3_to_joint2" type="revolute">
+  <joint name="joint2" type="revolute">
     <axis xyz="0 0 1"/>
     <limit effort = "1000.0" lower = "-3.14" upper = "3.14159" velocity = "0"/>
-    <parent link="joint2"/>
-    <child link="joint3"/>
+    <parent link="link2"/>
+    <child link="link3"/>
     <origin xyz= "0 0  0" rpy = "0 1.5708 -1.5708"/>  
   </joint>
 
 
-  <joint name="joint4_to_joint3" type="revolute">
+  <joint name="joint3" type="revolute">
     <axis xyz=" 0 0 1"/>
     <limit effort = "1000.0" lower = "-3.14" upper = "3.14159" velocity = "0"/>
-    <parent link="joint3"/>
-    <child link="joint4"/>
+    <parent link="link3"/>
+    <child link="link4"/>
     <origin xyz= "  -0.1104 0 0   " rpy = "0 0 0"/>  
   </joint>
 
 
 
-  <joint name="joint5_to_joint4" type="revolute">
+  <joint name="joint4" type="revolute">
     <axis xyz=" 0 0 1"/>
     <limit effort = "1000.0" lower = "-3.14" upper = "3.14159" velocity = "0"/>
-    <parent link="joint4"/>
-    <child link="joint5"/>
+    <parent link="link4"/>
+    <child link="link5"/>
     <origin xyz= "-0.096 0 0.06462" rpy = "0 0 -1.5708"/>  
   </joint>
 
-  <joint name="joint6_to_joint5" type="revolute">
+  <joint name="joint5" type="revolute">
     <axis xyz="0 0 1"/>
     <limit effort = "1000.0" lower = "-3.14" upper = "3.14159" velocity = "0"/>
-    <parent link="joint5"/>
-    <child link="joint6"/>
+    <parent link="link5"/>
+    <child link="link6"/>
     <origin xyz= "0 -0.07318 0" rpy = "1.5708 -1.5708 0"/>  
   </joint>
 
-  <joint name="joint6output_to_joint6" type="revolute">
+  <joint name="joint6" type="revolute">
     <axis xyz="0 0 1"/>
     <limit effort = "1000.0" lower = "-3.14" upper = "3.14159" velocity = "0"/>
-    <parent link="joint6"/>
-    <child link="joint6_flange"/>
+    <parent link="link6"/>
+    <child link="link7"/>
     <origin xyz= "0 0.0456 0" rpy = "-1.5708 0 0"/>  
   </joint>
 
   <joint name="end_effector" type="fixed">
     <axis xyz="0 0 1"/>
     <limit effort = "1000.0" lower = "-3.14" upper = "3.14159" velocity = "0"/>
-    <parent link="joint6_flange"/>
+    <parent link="link7"/>
     <child link="end_effector"/>
     <origin xyz= "0 0 0" rpy = "0 0 0"/>
   </joint>

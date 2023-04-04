@@ -56,9 +56,11 @@ class Raw(object):
         termios.tcsetattr(self.stream, termios.TCSANOW, self.original_stty)
 
 
-def teleop_keyboard(client):
-    rospy.init_node("teleop_keyboard")
-    rospy.Rate(10)
+def teleop_keyboard():
+    client = actionlib.SimpleActionClient('coords_comm_action_server', CoordsCommAction)
+    client.wait_for_server()
+    print("server ready.")
+
     model = 0
     speed = rospy.get_param("~speed", 70)
     change_percent = rospy.get_param("~change_percent", 5)
@@ -67,24 +69,24 @@ def teleop_keyboard(client):
     change_len = 250 * change_percent / 100
 
     # rospy.wait_for_service("get_joint_angles")
-    # print("service ready.")
-    # try:
-    #     get_coords = rospy.ServiceProxy("get_joint_coords", GetCoords)
+    print("service ready.")
+    try:
+        get_coords = rospy.ServiceProxy("get_joint_coords", GetCoords)
     #     set_coords = rospy.ServiceProxy("set_joint_coords", SetCoords)
     #     get_angles = rospy.ServiceProxy("get_joint_angles", GetAngles)
     #     set_angles = rospy.ServiceProxy("set_joint_angles", SetAngles)
     #     switch_gripper = rospy.ServiceProxy("switch_gripper_status", GripperStatus)
-    # except:
-    #     print("start error ...")
-    #     exit(1)
+    except:
+        print("start error ...")
+        exit(1)
 
     init_pose = [0, 0, 0, 0, 0, 0, speed]
     home_pose = [0, 0, 0, 0, 0, 0, speed]
 
     # rsp = set_angles(*init_pose)
-    # res =get_coords()
-    joint_msg = rospy.wait_for_message("/joint_state", JointState)
-    res = joint_msg
+    res =get_coords()
+    # joint_msg = rospy.wait_for_message("/joint_state", JointState)
+    # res = joint_msg
     # while True:
     #     res = get_coords()
     #     print(res.x)
@@ -106,40 +108,41 @@ def teleop_keyboard(client):
                 break
             elif key in ["w", "W"]:
                 record_coords[0] += change_len
+                print("w")
                 # response = set_coords(*record_coords) 
             elif key in ["s", "S"]:
                 record_coords[0] -= change_len
-                set_coords(*record_coords)
+                # set_coords(*record_coords)
             elif key in ["a", "A"]:
                 record_coords[1] -= change_len
-                set_coords(*record_coords)
+                # set_coords(*record_coords)
             elif key in ["d", "D"]:
                 record_coords[1] += change_len
-                set_coords(*record_coords)
+                # set_coords(*record_coords)
             elif key in ["z", "Z"]:
                 record_coords[2] -= change_len
-                set_coords(*record_coords)
+                # set_coords(*record_coords)
             elif key in ["x", "X"]:
                 record_coords[2] += change_len
-                set_coords(*record_coords)
+                # set_coords(*record_coords)
             elif key in ["u", "U"]:
                 record_coords[3] += change_angle
-                set_coords(*record_coords)
+                # set_coords(*record_coords)
             elif key in ["j", "J"]:
                 record_coords[3] -= change_angle
-                set_coords(*record_coords)
+                # set_coords(*record_coords)
             elif key in ["i", "I"]:
                 record_coords[4] += change_angle
-                set_coords(*record_coords)
+                # set_coords(*record_coords)
             elif key in ["k", "K"]:
                 record_coords[4] -= change_angle
-                set_coords(*record_coords)
+                # set_coords(*record_coords)
             elif key in ["o", "O"]:
                 record_coords[5] += change_angle
-                set_coords(*record_coords)
+                # set_coords(*record_coords)
             elif key in ["l", "L"]:
                 record_coords[5] -= change_angle
-                set_coords(*record_coords)
+                # set_coords(*record_coords)
             elif key in ["g", "G"]:
                 switch_gripper(True)
             elif key in ["h", "H"]:
@@ -170,10 +173,12 @@ def teleop_keyboard(client):
             continue
 
 if __name__ == "__main__":
-    try:
-        client = actionlib.SimpleActionClient('coords_comm_action_server', CoordsCommAction)
-        client.wait_for_server()
-        print("server ready.")
-        teleop_keyboard(client)
-    except rospy.ROSInterruptException:
-        pass
+    # try:
+    #     client = actionlib.SimpleActionClient('coords_comm_action_server', CoordsCommAction)
+    #     client.wait_for_server()
+    #     print("server ready.")
+    #     teleop_keyboard(client)
+    # except rospy.ROSInterruptException:
+    #     pass
+    rospy.init_node("teleop_keyboard", anonymous=True)
+    teleop_keyboard()

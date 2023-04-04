@@ -102,10 +102,7 @@ class MycobotInterface(object):
                     msg.header.stamp = rospy.get_rostime()
 
                     for i, ang in enumerate(self.real_angles):
-                        if (i+1) == len(self.real_angles): #last robot joint
-                            msg.name.append('joint' + str(i+1)+'output_to_'+'joint'+str(i+1))
-                        else:
-                            msg.name.append('joint' + str(i+2)+'_to_'+'joint'+str(i+1))
+                        msg.name.append('joint' + str(i+1))
                         # if (i+1) == (len(self.real_angles) -1): #last robot joint
                         #     msg.name.append('joint' + str(i+1)+'output_to_'+'joint'+str(i+1))
                         # else if (i+1) < (len(self.real_angles) -1):
@@ -272,23 +269,40 @@ class MycobotInterface(object):
 
     def joint_command_cb(self, msg):
         angles = self.real_angles
+        print("real_angles:", angles)
         vel = 50 # deg/s, hard-coding
         for n, p, v in zip_longest(msg.name, msg.position, msg.velocity):
             id = int(n[-1]) - 1
             if 'joint' in n and id >= 0 and id < len(angles):
-                if math.fabs(p) < 190.0 / 180 * math.pi: # 190 should be  retrieved from API
-                    angles[id] = p * 180 / math.pi
+                if math.fabs(p) < 190.0: # 190 should be  retrieved from API
+                    angles[id] = p
                 else:
-                    rospy.logwarn("%s exceeds the limit, %f", n, p)
-            if v:
-                v = v * 180 / math.pi
-                if v < vel:
-                    vel = v
+                   rospy.logwarn("%s exceeds the limit, %f", n, p)
 
-        print(angles, vel)
+        print("angles:",angles)
         self.lock.acquire()
-        result = self.mc.send_angles(angles, vel)
+        self.mc.send_angles(angles, vel)
         self.lock.release()
+
+    # def joint_command_cb(self, msg):
+    #     angles = self.real_angles
+    #     vel = 10 # deg/s, hard-coding
+    #     for n, p, v in zip_longest(msg.name, msg.position, msg.velocity):
+    #         id = int(n[-1]) - 1
+    #         if 'joint' in n and id >= 0 and id < len(angles):
+    #             if math.fabs(p) < 190.0 / 180 * math.pi: # 190 should be  retrieved from API
+    #                 angles[id] = p * 180 / math.pi
+    #             else:
+    #                 rospy.logwarn("%s exceeds the limit, %f", n, p)
+    #         if v:
+    #             v = v * 180 / math.pi
+    #             if v < vel:
+    #                 vel = v
+
+    #     print(angles, vel)
+    #     self.lock.acquire()
+    #     result = self.mc.send_angles(angles, vel)
+    #     self.lock.release()
 
     def joint_comm_action_cb(self, msg):
         angles = self.real_angles
