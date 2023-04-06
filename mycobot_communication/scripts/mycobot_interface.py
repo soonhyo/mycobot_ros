@@ -70,10 +70,10 @@ class MycobotInterface(object):
         self.create_services()
 
         # action server
-        self.create_action_servers()
+        # self.create_action_servers()
     def run(self):
 
-        r = rospy.Rate(rospy.get_param("~joint_state_rate", 30.0)) # hz
+        r = rospy.Rate(rospy.get_param("~joint_state_rate", 20.0)) # hz
         while not rospy.is_shutdown():
             try:
                 # get real joint from MyCobot
@@ -111,12 +111,13 @@ class MycobotInterface(object):
                         #     msg.name.append('end_effector')
 
                         msg.position.append(ang / 180.0 * math.pi)
+                    self.lock.acquire()
                     gripper_value = self.mc.get_gripper_value()
+                    self.lock.release()
                     if gripper_value != -1:
                         msg.name.append('gripper_controller')
                         gripper_value = -0.78 + round(gripper_value / 117.0, 2)
                         msg.position.append(gripper_value)
-                        rospy.loginfo("res: {}".format(radians_list))
                     self.joint_angle_pub.publish(msg)
 
                 # get gripper state
@@ -158,12 +159,12 @@ class MycobotInterface(object):
                         break
                 continue
 
-    def create_action_servers(self):
+    # def create_action_servers(self):
         # self.joint_comm_action_server = actionlib.SimpleActionServer('joint_comm_action_server', JointCommAction, self.joint_comm_action_cb)
-        self.coords_comm_action_server = actionlib.SimpleActionServer('coords_comm_action_server', CoordsCommAction, self.coords_comm_action_cb)
+        # self.coords_comm_action_server = actionlib.SimpleActionServer('coords_comm_action_server', CoordsCommAction, self.coords_comm_action_cb)
 
         # self.joint_comm_action_server.start()
-        self.coords_comm_action_server.start()
+        # self.coords_comm_action_server.start()
 
 
     def create_services(self):
