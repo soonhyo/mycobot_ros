@@ -1,21 +1,30 @@
 #!/usr/bin/env python2
+# encoding:utf-8
 # license removed for brevity
+from distutils.log import error
 import time
 import math
-import threading
 
 import rospy
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Header
 from mycobot_communication.srv import GetAngles
+from pymycobot.mycobot import MyCobot
+from rospy import ServiceException
 
 
 def talker():
     rospy.loginfo("start ...")
+    
+    port = rospy.get_param("~port", "/dev/mycobot")
+    baud = rospy.get_param("~baud", 115200)
+    mc = MyCobot(port, baud)
+    
     rospy.init_node("real_listener", anonymous=True)
     pub = rospy.Publisher("joint_states", JointState, queue_size=10)
     rate = rospy.Rate(30)  # 30hz
-    # pub joint state
+
+    # pub joint state，发布关节状态
     joint_state_send = JointState()
     joint_state_send.header = Header()
 
@@ -26,36 +35,51 @@ def talker():
         "joint5_to_joint4",
         "joint6_to_joint5",
         "joint6output_to_joint6",
+        "gripper_controller",
     ]
     joint_state_send.velocity = [0]
     joint_state_send.effort = []
 
-    # waiting util server `get_joint_angles` enable.
+    # waiting util server `get_joint_angles` enable.等待'get_joint_angles'服务启用
     rospy.loginfo("wait service")
     rospy.wait_for_service("get_joint_angles")
-    func = rospy.ServiceProxy("get_joint_angles", GetAngles)
-
+    
+    while True:
+        try:
+            func = rospy.ServiceProxy("get_joint_angles", GetAngles)
+            break
+        except ServiceException as e:
+            # pass
+            # print(f'error:{e}')
+            print("--------------error",e)
+    
     rospy.loginfo("start loop ...")
     while not rospy.is_shutdown():
-        # get real angles from server.
+        # get real angles from server.从服务器获得真实的角度。
         res = func()
         if res.joint_1 == res.joint_2 == res.joint_3 == 0.0:
             continue
-        radians_list = [
-            res.joint_1 * (math.pi / 180),
-            res.joint_2 * (math.pi / 180),
-            res.joint_3 * (math.pi / 180),
-            res.joint_4 * (math.pi / 180),
-            res.joint_5 * (math.pi / 180),
-            res.joint_6 * (math.pi / 180),
-        ]
-        rospy.loginfo("res: {}".format(radians_list))
+        
+        gripper_value = mc.get_gripper_value()
+        if gripper_value != -1:
+            gripper_value = -0.78 + round(gripper_value / 117.0, 2)
+            # print(gripper_value)            
+            radians_list = [
+                res.joint_1 * (math.pi / 180),
+                res.joint_2 * (math.pi / 180),
+                res.joint_3 * (math.pi / 180),
+                res.joint_4 * (math.pi / 180),
+                res.joint_5 * (math.pi / 180),
+                res.joint_6 * (math.pi / 180),
+            ]
+            radians_list.append(gripper_value)
+            rospy.loginfo("res: {}".format(radians_list))
 
-        # publish angles.
-        joint_state_send.header.stamp = rospy.Time.now()
-        joint_state_send.position = radians_list
-        pub.publish(joint_state_send)
-        rate.sleep()
+            # publish angles.发布角度
+            joint_state_send.header.stamp = rospy.Time.now()
+            joint_state_send.position = radians_list
+            pub.publish(joint_state_send)
+            rate.sleep()
 
 
 if __name__ == "__main__":

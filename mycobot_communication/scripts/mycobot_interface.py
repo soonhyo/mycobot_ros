@@ -73,9 +73,9 @@ class MycobotInterface(object):
         self.create_action_servers()
     def run(self):
 
-        r = rospy.Rate(rospy.get_param("~joint_state_rate", 20.0)) # hz
+        r = rospy.Rate(rospy.get_param("~joint_state_rate", 30.0)) # hz
         while not rospy.is_shutdown():
-            try:        
+            try:
                 # get real joint from MyCobot
                 self.lock.acquire()
                 if self.mc.is_moving():
@@ -88,7 +88,7 @@ class MycobotInterface(object):
                     self.lock.acquire()
                     real_angles = self.mc.get_angles()
                     self.lock.release()
-                    
+
                     if len(real_angles) != 6: # we assume mycobot only have 6 DoF of joints
                         rospy.logwarn("empty joint angles!!!")
                         rospy.loginfo("real_angles error "+ str(real_angles))
@@ -111,6 +111,12 @@ class MycobotInterface(object):
                         #     msg.name.append('end_effector')
 
                         msg.position.append(ang / 180.0 * math.pi)
+                    gripper_value = self.mc.get_gripper_value()
+                    if gripper_value != -1:
+                        msg.name.append('gripper_controller')
+                        gripper_value = -0.78 + round(gripper_value / 117.0, 2)
+                        msg.position.append(gripper_value)
+                        rospy.loginfo("res: {}".format(radians_list))
                     self.joint_angle_pub.publish(msg)
 
                 # get gripper state
