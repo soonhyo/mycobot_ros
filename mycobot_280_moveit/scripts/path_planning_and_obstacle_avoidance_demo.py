@@ -29,7 +29,7 @@ class MoveItPlanningDemo:
         self.end_effector_link = self.arm.get_end_effector_link()
 
         # 设置目标位置所使用的参考坐标系
-        self.reference_frame = "joint1"
+        self.reference_frame = "link1"
         self.arm.set_pose_reference_frame(self.reference_frame)
 
         # 当运动规划失败后，允许重新规划
