@@ -1,0 +1,41 @@
+import rospy
+from sensor_msgs.msg import PointCloud2
+import open3d as o3d
+import numpy as np
+import ros_numpy
+import sensor_msgs.point_cloud2 as pc2
+class PointCloudSubscriber:
+    def __init__(self):
+        self.num_points = 0
+        self.frame_id = ""
+        rospy.Subscriber("/hsi_color_filter/hsi_output", PointCloud2, self.callback)
+
+
+    def callback(self, msg):
+        # self.num_points = len(data.data) / data.point_step
+        self.frame_id = msg.header.frame_id
+        points = list(pc2.read_points(msg, skip_nans=True))
+
+        # Convert numpy array to Open3D point cloud
+        pcd = o3d.geometry.PointCloud()
+        try:
+            pcd.points = o3d.utility.Vector3dVector(np.asarray(points, dtype=np.float32)[:,:3])
+            self.find_pointcloud_center(pcd)
+            print("Message frame ID: %s" % self.frame_id)
+        except:
+            return
+    def find_pointcloud_center(self, pcd):
+        # Perform KNN clustering to find the center
+        kdtree = o3d.geometry.KDTreeFlann(pcd)
+        print(np.asarray(pcd.points))
+        [k, idx, _] = kdtree.search_knn_vector_3d(np.mean(pcd.points, axis=0), 1)
+        # center = points[idx[0][0]]
+        print(idx)
+        center = np.asarray(pcd.points)[idx[0],:]
+        print(center)
+        return center
+
+if __name__=="__main__":
+    rospy.init_node('pointcloud_subscriber')
+    app = PointCloudSubscriber()
+    rospy.spin()

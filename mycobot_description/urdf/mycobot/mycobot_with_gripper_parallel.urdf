@@ -1,14 +1,13 @@
 <?xml version="1.0"?>
-<robot  xmlns:xacro="http://www.ros.org/wiki/xacro" name="mycobot" >
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="mycobot" >
 
   <xacro:arg name="use_nominal_extrinsics" default="false"/>
 
   <xacro:property name="width" value=".2" />
   <xacro:include filename="$(find realsense2_description)/urdf/_d435i.urdf.xacro" />
 
-  <xacro:sensor_d435i parent="g_base" name="camera" use_nominal_extrinsics="$(arg use_nominal_extrinsics)">
-    <origin xyz="0.495 0 0.243" rpy="0 ${pi/4} -${pi}"/>
-
+  <xacro:sensor_d435i parent="link1" name="camera" use_nominal_extrinsics="$(arg use_nominal_extrinsics)">
+    <origin xyz="0.65 0.085 0.38" rpy="0 0 ${pi}"/>
   </xacro:sensor_d435i>
 
 
@@ -17,13 +16,13 @@
       <geometry>
         <mesh filename="package://mycobot_description/urdf/mycobot/G_base.dae"/>
       </geometry>
-      <origin xyz = "0.0 0 -0.027" rpy = "0 0 1.5708"/>
+      <origin xyz = "0.0 0 -0.03" rpy = "0 0 1.5708"/>
     </visual>
     <collision>
       <geometry>
         <mesh filename="package://mycobot_description/urdf/mycobot/G_base.dae"/>
       </geometry>
-      <origin xyz = "0.0 0 -0.027" rpy = "0 0 1.5708"/>
+      <origin xyz = "0.0 0 -0.03" rpy = "0 0 1.5708"/>
     </collision>
   </link>
 
@@ -163,7 +162,7 @@
     <origin xyz = "0.0 0 -0.012 " rpy = " 0 0 0"/>
     </collision>
   </link>
-
+<!-- ${-pi/4} -->
   <link name="gripper_left1">
     <visual>
       <geometry>
@@ -324,7 +323,9 @@
     <parent link="link7"/>
     <child link="gripper_base"/>
     <!-- <origin xyz= "0 0.0 0" rpy = "-1.5708 0 0"/>   -->
-    <origin xyz= "0 0 0.034" rpy = "1.579 0 0"/>  
+    <!-- <origin xyz= "0 0 0.034" rpy = "1.579 0 0"/>   -->
+    <origin xyz= "0 0 0.034" rpy = "${pi/2} 0 ${-pi/4}"/>
+
   </joint>
 
 
