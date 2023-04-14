@@ -5,7 +5,25 @@ find_package(catkin REQUIRED
   rospy
   std_msgs
   moveit_msgs
+  geometry_msgs
+  actionlib_msgs
+  message_generation
 )
+
+## Generate actions in the 'action' folder
+add_action_files(
+  FILES
+  PathFollow.action
+)
+
+## Generate added messages and services with any dependencies listed here
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+  actionlib_msgs
+  geometry_msgs
+)
+
 
 catkin_package()
 

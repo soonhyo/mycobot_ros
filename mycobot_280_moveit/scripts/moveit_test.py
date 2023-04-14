@@ -53,9 +53,26 @@ print("============ Available Planning Groups:", robot.get_group_names())
 print("============ Printing robot state")
 print(robot.get_current_state())
 print("")
+current_pose = move_group.get_current_pose()
+print("============ current pose: %s" % current_pose)
 
-scale = 10
+# # We get the joint values from the group and change some of the values:
+# joint_goal = move_group.get_current_joint_values()
+# joint_goal[0] = 0
+# joint_goal[1] = 0
+# joint_goal[2] = 0
+# joint_goal[3] = 0
+# joint_goal[4] = 0
+# joint_goal[5] = 0  # 1/6 of a turn
 
+# # The go command can be called with joint values, poses, or without any
+# # parameters if you have already set the pose or joint target for the group
+# move_group.go(joint_goal, wait=True)
+
+# # Calling ``stop()`` ensures that there is no residual movement
+# move_group.stop()
+
+scale=1
 waypoints = []
 
 wpose = move_group.get_current_pose().pose
@@ -78,13 +95,15 @@ waypoints.append(copy.deepcopy(wpose))
     waypoints, 0.01, 0.0  # waypoints to follow  # eef_step
 )  # jump_threshold
 
-# Note: We are just planning, not asking move_group to actually move the robot yet:
+print(plan)
 
-display_trajectory = moveit_msgs.msg.DisplayTrajectory()
-display_trajectory.trajectory_start = robot.get_current_state()
-display_trajectory.trajectory.append(plan)
-# Publish
-display_trajectory_publisher.publish(display_trajectory)
 
-move_group.execute(plan, wait=True)
+# display_trajectory = moveit_msgs.msg.DisplayTrajectory()
+# display_trajectory.trajectory_start = robot.get_current_state()
+# display_trajectory.trajectory.append(plan)
+# # Publish
+# display_trajectory_publisher.publish(display_trajectory)
 
+
+a=move_group.execute(plan, wait=True)
+print("a:",a)

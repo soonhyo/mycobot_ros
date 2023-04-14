@@ -7,10 +7,10 @@
   <xacro:include filename="$(find realsense2_description)/urdf/_d435i.urdf.xacro" />
 
   <xacro:sensor_d435i parent="g_base" name="camera" use_nominal_extrinsics="$(arg use_nominal_extrinsics)">
-    <origin xyz="0.495 0 0.243" rpy="0 ${pi/4} -${pi}"/>
+    <origin xyz="0.65 0.085 0.38" rpy="0 0 ${pi}"/>
+    <!-- <origin xyz="0.495 0 0.243" rpy="0 ${pi/4} -${pi}"/> -->
 
   </xacro:sensor_d435i>
-
 
   <link name="g_base">
     <visual>
@@ -63,7 +63,7 @@
   <link name="link3">
     <visual>
       <geometry>
-       <mesh filename="package://mycobot_description/urdf/mycobot/joint3.dae"/>
+p       <mesh filename="package://mycobot_description/urdf/mycobot/joint3.dae"/>
       </geometry>
     <origin xyz = "0.0 0 0.03256 " rpy = " 0 -1.5708 0"/>
     </visual>

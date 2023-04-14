@@ -1,0 +1,7 @@
+std_msgs/Int16MultiArray path
+sensor_msgs/PointCloud2 pointcloud
+sensor_msgs/Image mask
+---
+geometry_msgs/PoseArray pose_array
+---
+float32 rate
