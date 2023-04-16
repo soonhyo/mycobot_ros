@@ -112,10 +112,12 @@ class PathFollowServer(object):
         transformed_pose_array = self.transform_pose_array(goal.path, 'g_base', frame_id)
         poses = transformed_pose_array.poses
 
+        self.move_group.clear_pose_targets()
+
         waypoints = []
 
         wpose = self.move_group.get_current_pose().pose
-
+        waypoints.append(wpose)
         for pose in poses:
             wpose = pose
             # wpose.header.stamp = rospy.Time.now()

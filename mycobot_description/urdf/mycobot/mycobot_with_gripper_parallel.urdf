@@ -7,7 +7,7 @@
   <xacro:include filename="$(find realsense2_description)/urdf/_d435i.urdf.xacro" />
 
   <xacro:sensor_d435i parent="g_base" name="camera" use_nominal_extrinsics="$(arg use_nominal_extrinsics)">
-    <origin xyz="0.65 0.085 0.38" rpy="0 0 ${pi}"/>
+    <origin xyz="0.68 0.05 0.38" rpy="0 0 ${pi}"/>
     <!-- <origin xyz="0.495 0 0.243" rpy="0 ${pi/4} -${pi}"/> -->
 
   </xacro:sensor_d435i>
