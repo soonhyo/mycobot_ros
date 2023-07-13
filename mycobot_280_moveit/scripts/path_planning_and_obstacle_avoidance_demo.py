@@ -53,7 +53,7 @@ class MoveItPlanningDemo:
 
         self.arm.set_pose_target(target_pose, self.end_effector_link)
 
-        traj = self.arm.plan()
+        plan_success, traj, planning_time, error_code = self.arm.plan()
 
         self.arm.execute(traj)
         rospy.sleep(1)
