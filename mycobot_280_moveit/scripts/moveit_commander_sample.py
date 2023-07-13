@@ -18,12 +18,12 @@ class MoveItPlanningDemo:
         rospy.init_node("moveit_ik_demo")
 
         self.scene = moveit_commander.PlanningSceneInterface()
-        rospy.sleep(3)
+        rospy.sleep(1)
 
         self.arm = moveit_commander.MoveGroupCommander("arm_group")
 
         self.end_effector_link = self.arm.get_end_effector_link()
-        print(self.end_effector_link)
+
         self.reference_frame = "link1"
         self.arm.set_pose_reference_frame(self.reference_frame)
 
@@ -36,7 +36,7 @@ class MoveItPlanningDemo:
 
         self.arm.set_named_target("init_pose")
         self.arm.go()
-        rospy.sleep(4)
+        rospy.sleep(2)
 
         target_pose = PoseStamped()
         target_pose.header.frame_id = self.reference_frame
@@ -53,19 +53,18 @@ class MoveItPlanningDemo:
 
         self.arm.set_pose_target(target_pose, self.end_effector_link)
 
-        #traj = self.arm.plan()
-        plan_success, traj, planning_time, error_code = self.arm.plan()
+        traj = self.arm.plan()
 
         self.arm.execute(traj)
-        rospy.sleep(3)
+        rospy.sleep(1)
 
         self.arm.shift_pose_target(1, 0.12, self.end_effector_link)
         self.arm.go()
-        rospy.sleep(3)
+        rospy.sleep(1)
 
         self.arm.shift_pose_target(1, 0.1, self.end_effector_link)
         self.arm.go()
-        rospy.sleep(3)
+        rospy.sleep(1)
 
 if __name__ == "__main__":
     o = MoveItPlanningDemo()
