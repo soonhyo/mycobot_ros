@@ -4,6 +4,7 @@
 <!-- |    EDITING THIS FILE BY HAND IS NOT RECOMMENDED                                 | -->
 <!-- =================================================================================== -->
 <robot name="mycobot">
+  <mujoco> <compiler discardvisual="false" meshdir="mesh"/> </mujoco>
   <link name="link1">
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0.035"/>
@@ -12,13 +13,13 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link1.dae"/>
+        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link1.obj"/>
       </geometry>
       <origin rpy=" 0 0 -1.5707963267948966" xyz="0.0 0 0 "/>
-    </visual>
+    </visual>65;6003;1c
     <collision>
       <geometry>
-        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link1.dae"/>
+        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link1.obj"/>
       </geometry>
       <origin rpy=" 0 0 -1.5707963267948966" xyz="0.0 0 0 "/>
     </collision>
@@ -31,13 +32,13 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link2.dae"/>
+        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link2.obj"/>
       </geometry>
       <origin rpy=" 0 0 -1.5707963267948966" xyz="0.0 0 -0.06096 "/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link2.dae"/>
+        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link2.obj"/>
       </geometry>
       <origin rpy=" 0 0 -1.5707963267948966" xyz="0.0 0 -0.06096 "/>
     </collision>
@@ -50,13 +51,13 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link3.dae"/>
+        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link3.obj"/>
       </geometry>
       <origin rpy=" 0 -1.5707963267948966 0" xyz="0.0 0 0.03256 "/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link3.dae"/>
+        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link3.obj"/>
       </geometry>
       <origin rpy=" 0 -1.5707963267948966 0" xyz="0.0 0 0.03256 "/>
     </collision>
@@ -70,14 +71,14 @@
     <visual>
       <geometry>
         <!--- 0.0 0 -0.04 -->
-        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link4.dae"/>
+        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link4.obj"/>
       </geometry>
       <origin rpy=" 0 -1.5707963267948966 0" xyz="0.0 0 0.03056 "/>
     </visual>
     <collision>
       <geometry>
         <!--- 0.0 0 -0.04 -->
-        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link4.dae"/>
+        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link4.obj"/>
       </geometry>
       <origin rpy=" 0 -1.5707963267948966 0" xyz="0.0 0 0.03056 "/>
     </collision>
@@ -91,14 +92,14 @@
     <visual>
       <geometry>
         <!--- 0.0 0 -0.04 -->
-        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link5.dae"/>
+        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link5.obj"/>
       </geometry>
       <origin rpy=" -1.5707963267948966 0 0" xyz="0.0 0 -0.03356 "/>
     </visual>
     <collision>
       <geometry>
         <!--- 0.0 0 -0.04 -->
-        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link5.dae"/>
+        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link5.obj"/>
       </geometry>
       <origin rpy=" -1.5707963267948966 0 0" xyz="0.0 0 -0.03356 "/>
     </collision>
@@ -112,14 +113,14 @@
     <visual>
       <geometry>
         <!--- 0.0 0 -0.04 -->
-        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link6.dae"/>
+        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link6.obj"/>
       </geometry>
       <origin rpy=" 0 0 0" xyz="0 0.00 -0.038 "/>
     </visual>
     <collision>
       <geometry>
         <!--- 0.0 0 -0.04 -->
-        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link6.dae"/>
+        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link6.obj"/>
       </geometry>
       <origin rpy=" 0 0 0" xyz="0 0.00 -0.038 "/>
     </collision>
@@ -133,14 +134,14 @@
     <visual>
       <geometry>
         <!--- 0.0 0 -0.04 -->
-        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link7.dae"/>
+        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link7.obj"/>
       </geometry>
       <origin rpy=" 0 0 0" xyz="0.0 0 -0.012 "/>
     </visual>
     <collision>
       <geometry>
         <!--- 0.0 0 -0.04 -->
-        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link7.dae"/>
+        <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link7.obj"/>
       </geometry>
       <origin rpy=" 0 0 0" xyz="0.0 0 -0.012 "/>
     </collision>

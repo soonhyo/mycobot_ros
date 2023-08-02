@@ -1,0 +1,3 @@
+Wed Aug  2 14:42:42 2023
+WARNING: mju_openResource: unknown file '/mnt/ssd/catkin_ws/src/mycobot_ros/mycobot_description/urdf/mycobot/mycobot-project/mycobot_gym/envs/assets/mycobot.xml'
+

@@ -1,0 +1,21 @@
+<mujoco model="link2">
+  <default>
+    <default class="visual">
+      <geom group="2" type="mesh" contype="0" conaffinity="0"/>
+    </default>
+    <default class="collision">
+      <geom group="3" type="mesh"/>
+    </default>
+  </default>
+  <asset>
+    <texture type="2d" name="link2" file="link2.png"/>
+    <material name="material0.001" texture="link2" specular="0.0" shininess="0.25"/>
+    <mesh file="link2.obj"/>
+  </asset>
+  <worldbody>
+    <body name="link2">
+      <geom material="material0.001" mesh="link2" class="visual"/>
+      <geom mesh="link2" class="collision"/>
+    </body>
+  </worldbody>
+</mujoco>

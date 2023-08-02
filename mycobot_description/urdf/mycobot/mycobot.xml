@@ -2,8 +2,6 @@
   <compiler angle="radian" meshdir="mesh/" autolimits="true"/>
   <statistic meansize="0.112676" extent="0.508476" center="-3.72891e-06 -0.0331866 0.207295"/>
 
-  <option integrator="implicitfast"/>
-
   <default>
     <default class="mycobot">
       <general dyntype="none" biastype="affine" ctrlrange="-2.8973 2.8973" forcerange="-87 87"/>
@@ -96,12 +94,12 @@
   </worldbody>
 
   <actuator>
-    <general class="mycobot" name="actuator1" joint="joint1" gainprm="4500" biasprm="0 -4500 -450" />
-    <general class="mycobot" name="actuator2" joint="joint2" gainprm="4500" biasprm="0 -4500 -450" ctrlrange="-1.7628 1.7628"/>
-    <general class="mycobot" name="actuator3" joint="joint3" gainprm="3500" biasprm="0 -3500 -350" ctrlrange="-1.7628 1.7628"/>
-    <general class="mycobot" name="actuator4" joint="joint4" gainprm="3500" biasprm="0 -3500 -350" ctrlrange="-1.7628 1.7628"/>
-    <general class="mycobot" name="actuator5" joint="joint5" gainprm="2000" biasprm="0 -2000 -200" ctrlrange="-1.7628 1.7628"/>
-    <general class="mycobot" name="actuator6" joint="joint6" gainprm="2000" biasprm="0 -2000 -200" ctrlrange="-1.7628 1.7628"/>
+    <general class="mycobot" name="actuator1" joint="joint1" gainprm="4500" biasprm="0 -4500 -450" ctrlrange="-2.7925 2.7925"/>
+    <general class="mycobot" name="actuator2" joint="joint2" gainprm="4500" biasprm="0 -4500 -450" ctrlrange="-2.7925 2.7925"/>
+    <general class="mycobot" name="actuator3" joint="joint3" gainprm="3500" biasprm="0 -3500 -350" ctrlrange="-2.7925 2.7925"/>
+    <general class="mycobot" name="actuator4" joint="joint4" gainprm="3500" biasprm="0 -3500 -350" ctrlrange="-2.7925 2.7925"/>
+    <general class="mycobot" name="actuator5" joint="joint5" gainprm="2000" biasprm="0 -2000 -200" ctrlrange="-2.7925 2.7925"/>
+    <general class="mycobot" name="actuator6" joint="joint6" gainprm="2000" biasprm="0 -2000 -200" ctrlrange="-2.7925 2.7925"/>
   </actuator>
 
 </mujoco>
