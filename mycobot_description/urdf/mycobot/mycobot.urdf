@@ -16,7 +16,7 @@
         <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link1.obj"/>
       </geometry>
       <origin rpy=" 0 0 -1.5707963267948966" xyz="0.0 0 0 "/>
-    </visual>65;6003;1c
+    </visual>
     <collision>
       <geometry>
         <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link1.obj"/>

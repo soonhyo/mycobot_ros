@@ -1,0 +1,20 @@
+<mujoco model="gripper_left1">
+  <default>
+    <default class="visual">
+      <geom group="2" type="mesh" contype="0" conaffinity="0"/>
+    </default>
+    <default class="collision">
+      <geom group="3" type="mesh"/>
+    </default>
+  </default>
+  <asset>
+    <material name="material_0" specular="1.0" shininess="0.0" rgba="1.000000 1.000000 1.000000 1.000000"/>
+    <mesh file="gripper_left1.obj"/>
+  </asset>
+  <worldbody>
+    <body name="gripper_left1">
+      <geom material="material_0" mesh="gripper_left1" class="visual"/>
+      <geom mesh="gripper_left1" class="collision"/>
+    </body>
+  </worldbody>
+</mujoco>

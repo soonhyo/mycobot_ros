@@ -1,0 +1,47 @@
+<mujoco model="mycobot">
+  <compiler angle="radian" meshdir="mesh/" autolimits="true"/>
+  <statistic meansize="0.0320063" extent="0.157647" center="-0.000607315 0.0162442 0.00517874"/>
+  <asset>
+    <mesh name="gripper_base" file="gripper_base.obj"/>
+    <mesh name="gripper_left1" file="gripper_left1.obj"/>
+    <mesh name="gripper_left2" file="gripper_left2.obj"/>
+    <mesh name="gripper_left3" file="gripper_left3.obj"/>
+    <mesh name="gripper_right1" file="gripper_right1.obj"/>
+    <mesh name="gripper_right2" file="gripper_right2.obj"/>
+    <mesh name="gripper_right3" file="gripper_right3.obj"/>
+  </asset>
+  <worldbody>
+    <geom pos="0 0.008 -0.012" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="gripper_base"/>
+    <geom pos="0 0.008 -0.012" type="mesh" mesh="gripper_base"/>
+    <body name="gripper_left3" pos="-0.012 0.005 0">
+      <joint name="gripper_base_to_gripper_left3" pos="0 0 0" axis="0 0 1" range="-0.7 0.15"/>
+      <geom pos="0.012 0.0025 -0.012" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="gripper_left3"/>
+      <geom pos="0.012 0.0025 -0.012" type="mesh" mesh="gripper_left3"/>
+      <body name="gripper_left1" pos="-0.027 0.016 0">
+        <joint name="gripper_left3_to_gripper_left1" pos="0 0 0" axis="0 0 1" range="-0.5 0.5"/>
+        <geom pos="0.039 -0.0133 -0.012" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="gripper_left1"/>
+        <geom pos="0.039 -0.0133 -0.012" type="mesh" mesh="gripper_left1"/>
+      </body>
+    </body>
+    <body name="gripper_left2" pos="-0.005 0.027 0">
+      <joint name="gripper_base_to_gripper_left2" pos="0 0 0" axis="0 0 1" range="-0.8 0.5"/>
+      <geom pos="0.005 -0.0195 -0.012" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="gripper_left2"/>
+      <geom pos="0.005 -0.0195 -0.012" type="mesh" mesh="gripper_left2"/>
+    </body>
+    <body name="gripper_right3" pos="0.012 0.005 0">
+      <joint name="gripper_base_to_gripper_right3" pos="0 0 0" axis="0 0 1" range="-0.15 0.7"/>
+      <geom pos="-0.012 0.0025 -0.012" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="gripper_right3"/>
+      <geom pos="-0.012 0.0025 -0.012" type="mesh" mesh="gripper_right3"/>
+      <body name="gripper_right1" pos="0.027 0.016 0">
+        <joint name="gripper_right3_to_gripper_right1" pos="0 0 0" axis="0 0 1" range="-0.5 0.5"/>
+        <geom pos="-0.039 -0.0133 -0.012" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="gripper_right1"/>
+        <geom pos="-0.039 -0.0133 -0.012" type="mesh" mesh="gripper_right1"/>
+      </body>
+    </body>
+    <body name="gripper_right2" pos="0.005 0.027 0">
+      <joint name="gripper_base_to_gripper_right2" pos="0 0 0" axis="0 0 1" range="-0.5 0.8"/>
+      <geom pos="-0.005 -0.0195 -0.012" type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="gripper_right2"/>
+      <geom pos="-0.005 -0.0195 -0.012" type="mesh" mesh="gripper_right2"/>
+    </body>
+  </worldbody>
+</mujoco>

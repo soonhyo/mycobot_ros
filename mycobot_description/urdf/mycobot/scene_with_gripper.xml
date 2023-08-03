@@ -1,0 +1,49 @@
+<mujoco model="mycobot scene">
+  <include file="mycobot_with_gripper.xml"/>
+  <option integrator="implicit"/>
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <global azimuth="120" elevation="-20"/>
+  </visual>
+  <asset>
+    <texture name="texsponge" type="2d" file="sponge.png"/>
+    <material name="matsponge" texture="texsponge" specular="0.3"/>
+
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512"
+             height="3072"/>
+    <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.2 0.3 0.4"
+             rgb2="0.1 0.2 0.3" markrgb="0.8 0.8 0.8" width="300" height="300"/>
+    <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5"
+              reflectance="0.2"/>
+  </asset>
+  <worldbody>
+    <light pos="0 0 1.5" dir="0 0 -1" directional="true"/>
+    <!-- <camera name="camera" pos="-0.239 -0.018 0.751" xyaxes="0.002 -1.000 0.000 0.615 0.001 0.789"/> -->
+    <!-- <camera name="camera" pos="-0.254 0.007 0.714" xyaxes="-0.002 -1.000 0.000 0.901 -0.001 0.433"/> -->
+    <camera name="camera" pos="0.150 -0.007 0.795" xyaxes="0.005 -1.000 0.000 0.999 0.005 0.051"/>
+
+    <geom name="floor" size="0 0 0.05" type="plane" material="groundplane"/>
+
+    <body name="box1" pos="0.2 0.0 0.2">
+      <joint name="box1" type="free"/>
+      <geom name="box1" type="box"  mass="0.1" size=".01 .01 .01" rgba="1 0.0 0.0 1"/>
+    </body>
+
+    <body pos="0.3 0 0.2">
+      <freejoint/>
+      <composite type="box" count="7 7 7" spacing="0.005">
+        <skin texcoord="true" material="matsponge" rgba=".7 .7 .7 1"/>
+        <geom type="capsule" size=".0002 0.0001" rgba=".8 .2 .1 1"/>
+        <joint kind="main" solreffix="0.03 1" solimpfix="0 .1 .01"/>
+      </composite>
+    </body>
+
+  </worldbody>
+  <contact>
+    <pair name="gripper-left-object" geom1="box1" geom2="gripper_left1" condim="3" friction="0.1 2"/>
+    <pair name="gripper-right-object" geom1="box1" geom2="gripper_right1" condim="3" friction="0.1 2"/>
+  </contact>
+
+</mujoco>
