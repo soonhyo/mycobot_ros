@@ -10,7 +10,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--what", type=str, default="train")
 args = parser.parse_args()
 # 환경 생성
-env = gym.make("mycobot-v0", render_mode="human")
+env = gym.make("mycobot-v0", render_mode="rgb_array")
 
 # VecEnv 인스턴스를 생성
 # Stable Baselines3는 벡터화된 환경을 요구함
