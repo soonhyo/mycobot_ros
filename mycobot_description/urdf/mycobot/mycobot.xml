@@ -47,7 +47,7 @@
 
   </asset>
   <worldbody>
-    <body name="link1" childclass="mycobot">
+    <body name="link1" pos="0 0 0.45" childclass="mycobot">
       <inertial pos="0 0 0.035" mass="10"/>
       <geom quat="0.707107 0 0 -0.707107" material="material0" mesh="link1" class="visual"/>
       <geom pos="0 0 -0.01" quat="0.707107 0 0 -0.707107" mesh="link1" class="collision"/> <!-- This is temporary method to avoid collision between link1 and link2  -->

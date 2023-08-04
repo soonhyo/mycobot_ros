@@ -6,6 +6,8 @@ from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 
+import cv2
+
 DEFAULT_CAMERA_CONFIG = {
     "trackbodyid": -1,
     "distance": 4.0,
@@ -31,6 +33,7 @@ class MyCobotEnv(MujocoEnv, utils.EzPickle):
             os.path.dirname(os.path.abspath(__file__)) + "/assets/scene.xml",
             5,
             observation_space=observation_space,
+            camera_id=0,
             default_camera_config=DEFAULT_CAMERA_CONFIG,
             **kwargs,
         )
@@ -45,7 +48,11 @@ class MyCobotEnv(MujocoEnv, utils.EzPickle):
         self.do_simulation(a, self.frame_skip)
         if self.render_mode == "human":
             self.render()
-
+        else:
+            img = self.render()
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            cv2.imshow("img", img)
+            cv2.waitKey(1)
         ob = self._get_obs()
         return (
             ob,
