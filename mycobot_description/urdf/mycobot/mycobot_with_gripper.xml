@@ -109,11 +109,11 @@
                   <joint name="joint6"/>
                   <geom pos="0 0 -0.012" material="material6" mesh="link7" class="visual"/>
                   <geom pos="0 0 -0.012" mesh="link7" class="collision"/>
-                  <body name="gripper_base">
+                  <body name="gripper_base" euler="0 0 0.7854">
                     <geom pos="0 0.0119996 0.0340984" quat="0.7042 0.710001 0 0" material="material_gripper" class="visual" mesh="gripper_base"/>
                     <geom pos="0 0.0119996 0.0340984" quat="0.7042 0.710001 0 0" class="gripper" mesh="gripper_base"/>
                     <body name="gripper_left3" pos="-0.012 2.46107e-05 0.0310001" quat="0.7042 0.710001 0 0">
-                      <joint name="gripper_base_to_gripper_left3" pos="0 0 0" axis="0 0 1" range="-0.7 0.15"/>
+                      <joint name="gripper_base_to_gripper_left3" pos="0 0 0" axis="0 0 -1" range="0 0.8"/>
                       <geom pos="0.012 0.0033 -0.012" material="material_gripper" class="visual" mesh="gripper_left3"/>
                       <geom pos="0.012 0.0033 -0.012" class="gripper" mesh="gripper_left3"/>
 
@@ -123,13 +123,13 @@
                       <geom pos="0.005 -0.0195 -0.012" material="material_gripper" class="visual" mesh="gripper_left2"/>
                       <geom pos="0.005 -0.0195 -0.012" class="gripper" mesh="gripper_left2"/>
                       <body name="gripper_left1" pos="-0.034 -0.0065 0">
-                        <joint name="gripper_left2_to_gripper_left1" pos="0.0072 0.022 0" axis="0 0 1" range="-0.5 0.7"/>
+                        <joint name="gripper_left2_to_gripper_left1" pos="0.0072 0.022 0" axis="0 0 1" range="-0.5 0.8"/>
                         <geom pos="0.039 -0.0133 -0.012"  name="gripper_left1" material="material_gripper" class="visual" mesh="gripper_left1"/>
                         <geom pos="0.039 -0.0133 -0.012" class="gripper" mesh="gripper_left1"/>
                       </body>
                     </body>
                     <body name="gripper_right3" pos="0.012 2.46107e-05 0.0310001" quat="0.7042 0.710001 0 0">
-                      <joint name="gripper_base_to_gripper_right3" pos="0 0 0" axis="0 0 1" range="-0.15 0.7"/>
+                      <joint name="gripper_base_to_gripper_right3" pos="0 0 0"  axis="0 0 1" range="0 0.8"/>
                       <geom pos="-0.012 0.0033 -0.012" material="material_gripper" class="visual" mesh="gripper_right3"/>
                       <geom pos="-0.012 0.0033 -0.012" class="gripper" mesh="gripper_right3"/>
 
@@ -139,7 +139,7 @@
                       <geom pos="-0.005 -0.0195 -0.012" material="material_gripper" class="visual" mesh="gripper_right2"/>
                       <geom pos="-0.005 -0.0195 -0.012" class="gripper" mesh="gripper_right2"/>
                       <body name="gripper_right1" pos="0.034 -0.0065 0">
-                        <joint name="gripper_right2_to_gripper_right1" pos="-0.0072 0.022 0" axis="0 0 1" range="-0.7 0.5"/>
+                        <joint name="gripper_right2_to_gripper_right1" pos="-0.0072 0.022 0" axis="0 0 1" range="-0.8 0.5"/>
                         <geom pos="-0.039 -0.0133 -0.012"  name="gripper_right1" material="material_gripper" class="visual" mesh="gripper_right1"/>
                         <geom pos="-0.039 -0.0133 -0.012" class="gripper" mesh="gripper_right1"/>
                       </body>
@@ -175,15 +175,15 @@
 
   <tendon>
     <fixed name="split">
-      <joint joint="gripper_base_to_gripper_left3" coef="-0.5"/>
       <joint joint="gripper_base_to_gripper_right3" coef="0.5"/>
+      <joint joint="gripper_base_to_gripper_left3" coef="0.5"/>
     </fixed>
   </tendon>
 
   <equality>
     <connect anchor="0 0 0" body1="gripper_left1" body2="gripper_left3" solimp="0.95 0.99 0.001" solref="0.005 1"/>
     <connect anchor="0 0 0" body1="gripper_right1" body2="gripper_right3" solimp="0.95 0.99 0.001" solref="0.005 1"/>
-    <!-- <joint joint1="gripper_base_to_gripper_left3" joint2="gripper_base_to_gripper_right3" polycoef="0 1 0 0 0" solimp="0.95 0.99 0.001" solref="0.005 1"/> -->
+    <joint joint1="gripper_base_to_gripper_right3" joint2="gripper_base_to_gripper_left3" polycoef="0 1 0 0 0" solimp="0.95 0.99 0.001" solref="0.005 1"/>
   </equality>
 
   <actuator>
