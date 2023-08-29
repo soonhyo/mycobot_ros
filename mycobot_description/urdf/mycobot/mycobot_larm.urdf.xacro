@@ -1,0 +1,287 @@
+<?xml version="1.0"?>
+<robot  xmlns:xacro="http://www.ros.org/wiki/xacro" name="mycobot" >
+
+  <xacro:include filename="$(find mycobot_description)/urdf/common.xacro" />
+  <link name="link8">
+    <inertial>
+      <origin xyz="0 0 0.035" rpy="0 0 0" />
+      <mass value="10.0" /> <!-- for stable manipulation in gazebo-->
+      <xacro:cylinder_inertia m="10.0" r="0.05" h="0.07" />
+    </inertial>
+    <visual>
+      <geometry>
+       <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link8.dae"/>
+      </geometry>
+      <origin xyz = "0.0 0 0 " rpy = " 0 0 -${pi/2}"/>
+    </visual>
+    <collision>
+      <geometry>
+       <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link8.dae"/>
+        </geometry>
+        <origin xyz = "0.0 0 0 " rpy = " 0 0 -${pi/2}"/>
+    </collision>
+  </link>
+
+  <link name="link9">
+    <inertial>
+      <origin xyz="0 0 0.060" rpy="0 0 0" />
+      <mass value="0.2" />
+      <xacro:cylinder_inertia m="0.2" r="0.05" h="0.08" />
+    </inertial>
+    <visual>
+      <geometry>
+       <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link9.dae"/>
+      </geometry>
+      <origin xyz = "0.0 0 -0.06096 " rpy = " 0 0 -${pi/2}"/>
+    </visual>
+    <collision>
+     <geometry>
+       <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link9.dae"/>
+      </geometry>
+      <origin xyz = "0.0 0 -0.06096 " rpy = " 0 0 -${pi/2}"/>
+    </collision>
+  </link>
+
+  <link name="link10">
+    <inertial>
+      <origin xyz="0.01 0 0.06" rpy="0 0 0" />
+      <mass value="0.4" />
+      <xacro:cylinder_inertia m="0.4" r="0.05" h="0.155" />
+    </inertial>
+    <visual>
+      <geometry>
+       <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link10.dae"/>
+      </geometry>
+    <origin xyz = "0.0 0 0.03256 " rpy = " 0 -${pi/2} 0"/>
+    </visual>
+    <collision>
+      <geometry>
+       <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link10.dae"/>
+      </geometry>
+      <origin xyz = "0.0 0 0.03256 " rpy = " 0 -${pi/2} 0"/>
+    </collision>
+  </link>
+
+  <link name="link11">
+    <inertial>
+      <origin xyz="-0.01 0 0.05" rpy="0 0 0" />
+      <mass value="0.4" />
+      <xacro:cylinder_inertia m="0.4" r="0.05" h="0.155" />
+    </inertial>
+    <visual>
+      <geometry>
+       <!--- 0.0 0 -0.04 -->
+       <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link11.dae"/>
+      </geometry>
+      <origin xyz = "0.0 0 0.03056 " rpy = " 0 -${pi/2} 0"/>
+    </visual>
+    <collision>
+      <geometry>
+       <!--- 0.0 0 -0.04 -->
+       <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link11.dae"/>
+      </geometry>
+      <origin xyz = "0.0 0 0.03056 " rpy = " 0 -${pi/2} 0"/>
+    </collision>
+  </link>
+
+  <link name="link12">
+    <inertial>
+      <origin xyz="0 0 0.05" rpy="0 0 0" />
+      <mass value="0.2" />
+      <xacro:cylinder_inertia m="0.2" r="0.05" h="0.05" />
+    </inertial>
+    <visual>
+      <geometry>
+       <!--- 0.0 0 -0.04 -->
+       <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link12.dae"/>
+      </geometry>
+    <origin xyz = "0.0 0 -0.03356 " rpy = " -${pi/2} 0 0"/>
+    </visual>
+    <collision>
+       <geometry>
+       <!--- 0.0 0 -0.04 -->
+       <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link12.dae"/>
+      </geometry>
+      <origin xyz = "0.0 0 -0.03356 " rpy = " -${pi/2} 0 0"/>
+    </collision>
+  </link>
+
+  <link name="link13">
+    <inertial>
+      <origin xyz="0 0 0.037" rpy="0 0 0" />
+      <mass value="0.5" />
+      <xacro:cylinder_inertia m="0.5" r="0.05" h="0.06" />
+    </inertial>
+    <visual>
+      <geometry>
+       <!--- 0.0 0 -0.04 -->
+       <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link13.dae"/>
+      </geometry>
+    <origin xyz = "0 0.00 -0.038 " rpy = " 0 0 0"/>
+    </visual>
+    <collision>
+      <geometry>
+       <!--- 0.0 0 -0.04 -->
+       <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link13.dae"/>
+      </geometry>
+    <origin xyz = "0 0.00 -0.038 " rpy = " 0 0 0"/>
+    </collision>
+  </link>
+
+  <link name="link14">
+    <inertial>
+      <origin xyz="0 0.0025 0" rpy="${M_PI/2} 0 0" />
+      <mass value="0.1" />
+      <xacro:cylinder_inertia m="0.1" r="0.02" h="0.005" />
+    </inertial>
+    <visual>
+      <geometry>
+       <!--- 0.0 0 -0.04 -->
+       <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link14.dae"/>
+      </geometry>
+    <origin xyz = "0.0 0 -0.012 " rpy = " 0 0 0"/>
+    </visual>
+    <collision>
+      <geometry>
+       <!--- 0.0 0 -0.04 -->
+       <mesh filename="package://mycobot_description/urdf/mycobot/mesh/link14.dae"/>
+      </geometry>
+    <origin xyz = "0.0 0 -0.012 " rpy = " 0 0 0"/>
+    </collision>
+  </link>
+
+  <joint name="joint7" type="revolute">
+    <axis xyz="0 0 1"/>
+    <limit effort = "10.0" lower = "${-pi}" upper = "${pi}" velocity = "1.0"/>
+    <parent link="link8"/>
+    <child link="link9"/>
+    <origin xyz= "0 0 0.13156" rpy = "0 0 0"/>
+    <dynamics damping="1.0e-6" friction="2.0e-1" />
+  </joint>
+
+  <joint name="joint8" type="revolute">
+    <axis xyz="0 0 1"/>
+    <limit effort = "10.0" lower = "${-pi}" upper = "${pi}" velocity = "1.0"/>
+    <parent link="link9"/>
+    <child link="link10"/>
+    <origin xyz= "0 0  0" rpy = "0 ${pi/2} -${pi/2}"/>
+    <dynamics damping="1.0e-6" friction="2.0e-1" />
+  </joint>
+
+  <joint name="joint9" type="revolute">
+    <axis xyz=" 0 0 1"/>
+    <limit effort = "10.0" lower = "${-pi}" upper = "${pi}" velocity = "1.0"/>
+    <parent link="link10"/>
+    <child link="link11"/>
+    <origin xyz= "-0.1104 0 0   " rpy = "0 0 0"/>
+    <dynamics damping="1.0e-6" friction="2.0e-1" />
+  </joint>
+
+  <joint name="joint10" Type="revolute">
+    <axis xyz=" 0 0 1"/>
+    <limit effort = "10.0" lower = "${-pi}" upper = "${pi}" velocity = "1.0"/>
+    <parent link="link11"/>
+    <child link="link12"/>
+    <origin xyz= "-0.096 0 0.06462" rpy = "0 0 -${pi/2}"/>
+    <dynamics damping="1.0e-6" friction="2.0e-1" />
+  </joint>
+
+  <joint name="joint11" type="revolute">
+    <axis xyz="0 0 1"/>
+    <limit effort = "10.0" lower = "${-pi}" upper = "${pi}" velocity = "1.0"/>
+    <parent link="link12"/>
+    <child link="link13"/>
+    <origin xyz= "0 -0.07318 0" rpy = "${pi/2} -${pi/2} 0"/>
+    <dynamics damping="1.0e-6" friction="2.0e-1" />
+  </joint>
+
+  <joint name="joint12" type="revolute">
+    <axis xyz="0 0 1"/>
+    <limit effort = "10.0" lower = "${-pi}" upper = "${pi}" velocity = "1.0"/>
+    <parent link="link13"/>
+    <child link="link14"/>
+    <origin xyz= "0 0.0456 0" rpy = "-${pi/2} 0 0"/>
+    <dynamics damping="1.0e-6" friction="2.0e-1" />
+  </joint>
+
+  <transmission name="joint7_trans">
+    <provideFeedback>true</provideFeedback>
+    <implicitSpringDamper>0</implicitSpringDamper>
+    <motorTorqueConstant>0.418</motorTorqueConstant>
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint7">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="joint7_motor">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+  <transmission name="joint8_trans">
+    <provideFeedback>true</provideFeedback>
+    <implicitSpringDamper>0</implicitSpringDamper>
+    <motorTorqueConstant>0.418</motorTorqueConstant>
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint8">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="joint8_motor">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+  <transmission name="joint9_trans">
+    <provideFeedback>true</provideFeedback>
+    <implicitSpringDamper>0</implicitSpringDamper>
+    <motorTorqueConstant>0.418</motorTorqueConstant>
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint9">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="joint9_motor">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+  <transmission name="joint10_trans">
+    <provideFeedback>true</provideFeedback>
+    <implicitSpringDamper>0</implicitSpringDamper>
+    <motorTorqueConstant>0.418</motorTorqueConstant>
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint10">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="joint10_motor">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+  <transmission name="joint11_trans">
+    <provideFeedback>true</provideFeedback>
+    <implicitSpringDamper>0</implicitSpringDamper>
+    <motorTorqueConstant>0.418</motorTorqueConstant>
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint11">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="joint11_motor">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+  <transmission name="joint12_trans">
+    <provideFeedback>true</provideFeedback>
+    <implicitSpringDamper>0</implicitSpringDamper>
+    <motorTorqueConstant>0.418</motorTorqueConstant>
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint12">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="joint12_motor">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+</robot>
+

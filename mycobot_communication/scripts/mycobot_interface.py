@@ -5,8 +5,10 @@ import sys
 import signal
 import threading
 import math
-from itertools import izip_longest # TODO: python3 is zip_longest
-zip_longest = izip_longest
+from itertools import zip_longest
+
+# from itertools import izip_longest # TODO: python3 is zip_longest
+# zip_longest = izip_longest
 
 from pymycobot.mycobot import MyCobot
 
