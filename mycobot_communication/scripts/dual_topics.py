@@ -135,7 +135,7 @@ class MycobotTopics(object):
                     else:
                         msg.name.append("joint"+str(i+1)+"_R")
                     msg.position.append(ang / 180.0 * math.pi)
-                pub.publish(ma)
+                pub.publish(msg)
                 # time.sleep(0.25)
                 self.rate.sleep()
 
