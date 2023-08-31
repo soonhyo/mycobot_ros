@@ -56,6 +56,11 @@ add_message_files(FILES
   MycobotSetCoords.msg
   MycobotGripperStatus.msg
   MycobotPumpStatus.msg
+
+  MydualAngles.msg
+  MydualSetAngles.msg
+  MydualGripperStatus.msg
+  MydualServoStatus.msg
 )
 
 ## Generate services in the 'srv' folder

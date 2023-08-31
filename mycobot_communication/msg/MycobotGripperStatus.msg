@@ -1,1 +1,2 @@
-bool Status
+bool lgripper
+bool rgripper
