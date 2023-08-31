@@ -16,4 +16,3 @@ float32 joint_8
 float32 joint_9
 float32 joint_10
 float32 joint_11
-float32 joint_12

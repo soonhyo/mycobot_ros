@@ -9,8 +9,9 @@ import rospy
 
 from pymycobot.mycobot import MyCobot
 
+from sensor_msgs.msg import JointState
+
 from mycobot_communication.msg import (
-    MydualAngles,
     MydualSetAngles,
     MydualGripperStatus,
     MydualServoStatus,
@@ -123,24 +124,17 @@ class MycobotTopics(object):
     def pub_real_angles(self):
         """Publish real angle"""
         """发布真实角度"""
-        pub = rospy.Publisher("Mycobot/angles_real",
-                              MycobotAngles, queue_size=15)
-        ma = MycobotAngles()
+        pub = rospy.Publisher("joint_states",
+                              JointState, queue_size=15)
+        msg = JointState()
         while not rospy.is_shutdown():
             if not (None in self.angles):
-                ma.joint_0 = self.angles[0]
-                ma.joint_1 = self.angles[1]
-                ma.joint_2 = self.angles[2]
-                ma.joint_3 = self.angles[3]
-                ma.joint_4 = self.angles[4]
-                ma.joint_5 = self.angles[5]
-
-                ma.joint_6 = self.angles[6]
-                ma.joint_7 = self.angles[7]
-                ma.joint_8 = self.angles[8]
-                ma.joint_9 = self.angles[9]
-                ma.joint_10 = self.angles[10]
-                ma.joint_11 = self.angles[11]
+                for i, ang in enumerate(self.angles):
+                    if i < 6:
+                        msg.name.append("joint"+str(i+1)+"_L")
+                    else:
+                        msg.name.append("joint"+str(i+1)+"_R")
+                    msg.position.append(ang / 180.0 * math.pi)
                 pub.publish(ma)
                 # time.sleep(0.25)
                 self.rate.sleep()
@@ -178,7 +172,7 @@ class MycobotTopics(object):
             sa2.join()
 
         sub = rospy.Subscriber(
-            "Mycobot/angles_goal", MycobotSetAngles, callback=callback
+            "joint_command", MycobotSetAngles, callback=callback
         )
         rospy.spin()
 
