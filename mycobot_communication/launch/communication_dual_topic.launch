@@ -1,0 +1,14 @@
+<launch>
+	<!-- Select connecting device and serial port ，选择连接设备及串口-->
+	<arg name="port_l" default="/dev/ttyACM0" />
+	<arg name="port_r" default="/dev/ttyUSB0" />
+
+	<arg name="baud" default="115200" />
+
+	<!-- Open communication service，开启通讯服务 -->
+	<node name="mycobot_services" pkg="mycobot_communication" type="dual_topics.py" output="screen">
+		<param name="port_l" type="string" value="$(arg port_l)" />
+		<param name="port_r" type="string" value="$(arg port_r)" />
+		<param name="baud" type="int" value="$(arg baud)" />
+    </node>
+</launch>
