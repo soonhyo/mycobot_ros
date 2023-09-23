@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import time
 import os
 import sys
@@ -6,6 +6,7 @@ import signal
 import threading
 import math
 from itertools import zip_longest
+#from itertools import izip_longest # TODO: python3 is zip_longest
 
 # from itertools import izip_longest # TODO: python3 is zip_longest
 # zip_longest = izip_longest
@@ -17,6 +18,7 @@ import actionlib
 from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryResult, FollowJointTrajectoryFeedback, GripperCommandAction, GripperCommandResult, GripperCommandFeedback
 from sensor_msgs.msg import JointState
 from geometry_msgs.msg import PoseStamped, Quaternion
+from std_msgs.msg import Bool
 from std_srvs.srv import SetBool, SetBoolResponse, Empty
 import tf
 import numpy as np
@@ -42,6 +44,8 @@ class MycobotInterface(object):
         if self.pub_end_coord:
             self.end_coord_pub = rospy.Publisher("end_coord", PoseStamped, queue_size=5)
 
+        self.atom_button_pub = rospy.Publisher("atom_button", Bool, queue_size=5)
+
         self.servo_srv = rospy.Service("set_servo", SetBool, self.set_servo_cb)
 
         self.open_gripper_srv = rospy.Service("open_gripper", Empty, self.open_gripper_cb)
@@ -59,9 +63,10 @@ class MycobotInterface(object):
         self.gripper_as = actionlib.SimpleActionServer("gripper_controller/gripper_command", GripperCommandAction, execute_cb=self.gripper_as_cb)
         self.gripper_as.start()
 
+        self.get_atom_button = True
     def run(self):
 
-        r = rospy.Rate(rospy.get_param("~joint_state_rate", 20.0)) # hz
+        r = rospy.Rate(rospy.get_param("~joint_state_rate", 30.0)) # hz
 
         while not rospy.is_shutdown():
 
@@ -90,6 +95,10 @@ class MycobotInterface(object):
                    msg.position.append(ang / 180.0 * math.pi)
                 self.joint_angle_pub.publish(msg)
 
+            if self.get_atom_button:
+                msg = Bool()
+                msg.data = False if self.mc.get_digital_input(39) else True
+                self.atom_button_pub.publish(msg)
             # get gripper state
             # Note: we only retreive the gripper state when doing the grasp action.
             # We find following polling function will cause the failure of get_angles() for Mycobot Pro 320.
@@ -119,7 +128,7 @@ class MycobotInterface(object):
 
     def joint_command_cb(self, msg):
         angles = self.real_angles
-        vel = 50 # deg/s, hard-coding
+        vel = 30 # deg/s, hard-coding
         for n, p, v in zip_longest(msg.name, msg.position, msg.velocity):
             id = int(n[-1]) - 1
             if 'joint' in n and id >= 0 and id < len(angles):
