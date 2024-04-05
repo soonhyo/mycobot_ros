@@ -64,9 +64,12 @@ class MycobotInterface(object):
         self.gripper_as.start()
 
         self.get_atom_button = True
+
+        self.r = rospy.Rate(rospy.get_param("~joint_state_rate", 20.0)) # hz
+
     def run(self):
 
-        r = rospy.Rate(rospy.get_param("~joint_state_rate", 30.0)) # hz
+        r = rospy.Rate(rospy.get_param("~joint_state_rate", 20.0)) # hz
 
         while not rospy.is_shutdown():
 
@@ -162,13 +165,15 @@ class MycobotInterface(object):
 
     def open_gripper_cb(self, req):
         self.lock.acquire()
-        self.mc.set_gripper_state(0, 80)
+        # self.mc.set_gripper_state(0, 0)
+        self.mc.set_gripper_value(98, 0) # first arg is the flag 0 - open, 1 - close; second arg is the speed
         self.lock.release()
         rospy.loginfo("open gripper")
 
     def close_gripper_cb(self, req):
         self.lock.acquire()
-        self.mc.set_gripper_state(1, 80)
+        # self.mc.set_gripper_state(1, 0)
+        self.mc.set_gripper_value(15, 0) # first arg is the flag 0 - open, 1 - close; second arg is the speed
         self.lock.release()
         rospy.loginfo("close gripper")
 
@@ -266,7 +271,7 @@ class MycobotInterface(object):
 
         ## wait for start
         rospy.loginfo("Trajectory start requested at %.3lf, waiting...", goal.trajectory.header.stamp.to_sec())
-        r = rospy.Rate(100)
+        r = rospy.Rate(20)
         while (goal.trajectory.header.stamp - time).to_sec() > 0:
             time = rospy.Time.now()
             r.sleep()
@@ -411,7 +416,12 @@ class MycobotInterface(object):
             time.sleep(0.1) # wait for the finish of last joint angles polling
 
         self.lock.acquire()
-        self.mc.set_gripper_state(goal_state, 100) # first arg is the flag 0 - open, 1 - close; second arg is the speed
+        # self.mc.set_gripper_state(goal_state, 0) # first arg is the flag 0 - open, 1 - close; second arg is the speed
+        if goal_state == 0:
+            self.mc.set_gripper_value(98, 0) # first arg is the flag 0 - open, 1 - close; second arg is the speed
+        else:
+            self.mc.set_gripper_value(15, 0) # first arg is the flag 0 - open, 1 - close; second arg is the speed
+
         self.lock.release()
 
         self.get_joint_state = True # resume polling joint state if necessary
@@ -420,6 +430,7 @@ class MycobotInterface(object):
         rospy.sleep(0.3) # wait for the gripper to start moving
 
         r = rospy.Rate(20) # 20 Hz
+
         while not rospy.is_shutdown():
 
             rospy.logdebug("Current gripper value is  %d state is %d", self.gripper_value, self.gripper_is_moving);
@@ -450,7 +461,6 @@ class MycobotInterface(object):
 
 
             r.sleep();
-
 
 if __name__ == "__main__":
     rospy.init_node("mycobot_topics")
