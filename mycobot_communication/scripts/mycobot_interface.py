@@ -19,7 +19,7 @@ from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryR
 from sensor_msgs.msg import JointState
 from geometry_msgs.msg import PoseStamped, Quaternion
 from std_msgs.msg import Bool
-from std_srvs.srv import SetBool, SetBoolResponse, Empty
+from std_srvs.srv import SetBool, SetBoolResponse, Empty, Trigger, TriggerResponse
 import tf
 import numpy as np
 
@@ -46,7 +46,8 @@ class MycobotInterface(object):
 
         self.atom_button_pub = rospy.Publisher("atom_button", Bool, queue_size=5)
 
-        self.servo_srv = rospy.Service("set_servo", SetBool, self.set_servo_cb)
+        self.set_servo_srv = rospy.Service("set_servo", SetBool, self.set_servo_cb)
+        self.get_servo_srv = rospy.Service("get_servo", Trigger, self.get_servo_cb)
 
         self.open_gripper_srv = rospy.Service("open_gripper", Empty, self.open_gripper_cb)
         self.close_gripper_srv = rospy.Service("close_gripper", Empty, self.close_gripper_cb)
@@ -64,6 +65,8 @@ class MycobotInterface(object):
         self.gripper_as.start()
 
         self.get_atom_button = True
+
+        self.servo_on = True
 
         self.r = rospy.Rate(rospy.get_param("~joint_state_rate", 20.0)) # hz
 
@@ -154,14 +157,18 @@ class MycobotInterface(object):
             self.lock.acquire()
             self.mc.send_angles(self.real_angles, 0)
             self.lock.release()
+            self.servo_on = True
             rospy.loginfo("servo on")
         else:
             self.lock.acquire()
             self.mc.release_all_servos()
             self.lock.release()
+            self.servo_on = False
             rospy.loginfo("servo off")
-
         return SetBoolResponse(True, "")
+
+    def get_servo_cb(self, req):
+        return TriggerResponse(True, str(self.servo_on))
 
     def open_gripper_cb(self, req):
         self.lock.acquire()
