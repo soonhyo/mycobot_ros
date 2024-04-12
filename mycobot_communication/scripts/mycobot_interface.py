@@ -30,8 +30,11 @@ class MycobotInterface(object):
         port = rospy.get_param("~port", "/dev/ttyUSB0")
         baud = rospy.get_param("~baud", 115200)
         self.model = rospy.get_param("~model", '280')
-        self.vel_rate = rospy.get_param("~vel_rate", 32.0) # bit/rad
+        self.vel_rate = rospy.get_param("~vel_rate", 64.0) # bit/rad
         self.min_vel = rospy.get_param("~min_vel", 10) # bit, for the bad velocity tracking of mycobot.
+        # self.vel_rate = rospy.get_param("~vel_rate", 32.0) # bit/rad
+        # self.min_vel = rospy.get_param("~min_vel", 10) # bit, for the bad velocity tracking of mycobot.
+
         rospy.loginfo("Connect mycobot on %s,%s" % (port, baud))
         self.mc = MyCobot(port, baud)
         self.lock = threading.Lock()
@@ -134,7 +137,9 @@ class MycobotInterface(object):
 
     def joint_command_cb(self, msg):
         angles = self.real_angles
-        vel = 30 # deg/s, hard-coding
+        vel = 60 # deg/s, hard-coding
+        # vel = 30 # deg/s, hard-coding
+
         for n, p, v in zip_longest(msg.name, msg.position, msg.velocity):
             id = int(n[-1]) - 1
             if 'joint' in n and id >= 0 and id < len(angles):
