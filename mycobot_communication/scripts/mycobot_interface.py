@@ -71,11 +71,11 @@ class MycobotInterface(object):
 
         self.servo_on = True
 
-        self.r = rospy.Rate(rospy.get_param("~joint_state_rate", 20.0)) # hz
+        self.r = rospy.Rate(rospy.get_param("~joint_state_rate", 10.0)) # hz
 
     def run(self):
 
-        r = rospy.Rate(rospy.get_param("~joint_state_rate", 20.0)) # hz
+        r = rospy.Rate(rospy.get_param("~joint_state_rate", 5)) # hz
 
         while not rospy.is_shutdown():
 
@@ -137,13 +137,13 @@ class MycobotInterface(object):
 
     def joint_command_cb(self, msg):
         angles = self.real_angles
-        vel = 60 # deg/s, hard-coding
+        vel = 30 # deg/s, hard-coding
         # vel = 30 # deg/s, hard-coding
 
         for n, p, v in zip_longest(msg.name, msg.position, msg.velocity):
             id = int(n[-1]) - 1
             if 'joint' in n and id >= 0 and id < len(angles):
-                if math.fabs(p) < 190.0 / 180 * math.pi: # 190 should be  retrieved from API
+                if math.fabs(p) < 170.0 / 180 * math.pi: # 190 should be  retrieved from API
                     angles[id] = p * 180 / math.pi
                 else:
                     rospy.logwarn("%s exceeds the limit, %f", n, p)
@@ -152,7 +152,6 @@ class MycobotInterface(object):
                 if v < vel:
                     vel = v
 
-        print(angles, vel)
         self.lock.acquire()
         self.mc.send_angles(angles, vel)
         self.lock.release()
@@ -283,7 +282,7 @@ class MycobotInterface(object):
 
         ## wait for start
         rospy.loginfo("Trajectory start requested at %.3lf, waiting...", goal.trajectory.header.stamp.to_sec())
-        r = rospy.Rate(20)
+        r = rospy.Rate(5)
         while (goal.trajectory.header.stamp - time).to_sec() > 0:
             time = rospy.Time.now()
             r.sleep()
@@ -441,7 +440,7 @@ class MycobotInterface(object):
         t = rospy.Time(0)
         rospy.sleep(0.3) # wait for the gripper to start moving
 
-        r = rospy.Rate(20) # 20 Hz
+        r = rospy.Rate(5) # 20 Hz
 
         while not rospy.is_shutdown():
 
