@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*
 import time
 import rospy
@@ -7,6 +7,8 @@ import fcntl
 from mycobot_communication.srv import *
 
 from pymycobot.mycobot import MyCobot
+
+from sensor_msgs.msg import JointState
 
 mc = None
 lock_name = None
@@ -52,7 +54,7 @@ def release(lock_file_fd):
 
 def create_handle():
     global mc, lock_name
-    rospy.init_node("mycobot_services")
+    rospy.init_node("mycobot_services_topics", anonymous=True)
     rospy.loginfo("start ...")
     port = rospy.get_param("~port")
     baud = rospy.get_param("~baud")
@@ -255,5 +257,4 @@ if __name__ == "__main__":
     # print(MyCobot.__dict__)
     create_handle()
     output_robot_message()
-    # create_services()
-    create_services_and_subscribers()
+    create_services()

@@ -1,4 +1,5 @@
 #!/usr/bin/env python2
+# -*- coding:utf-8 -*-
 import time
 import os
 import sys
@@ -53,8 +54,9 @@ class Watcher:
         try:
             os.wait()
         except KeyboardInterrupt:
-            # I put the capital B in KeyBoardInterrupt so I can
-            # tell when the Watcher gets the SIGINT
+            # I put the capital B in KeyBoardInterrupt so I can# 
+            # 我把大写的 B 放在 KeyBoardInterrupt 中，这样我就可以了
+            # tell when the Watcher gets the SIGINT，告诉 Watcher 何时收到 SIGINT
             print("KeyBoardInterrupt")
             self.kill()
         sys.exit()
@@ -72,9 +74,9 @@ class MycobotTopics(object):
 
         rospy.init_node("mycobot_topics")
         rospy.loginfo("start ...")
-        # problem
-        port = rospy.get_param("~port", "/dev/ttyUSB0")
-        baud = rospy.get_param("~baud", 115200)
+        # Select connected device，选择连接设备
+        port = rospy.get_param("~port", "/dev/ttyAMA0")
+        baud = rospy.get_param("~baud", 1000000)
         rospy.loginfo("%s,%s" % (port, baud))
         # self.mc = MyCobot(port,baud)
         self.mc = MyCobotSocket(port, baud) # port
@@ -112,6 +114,8 @@ class MycobotTopics(object):
         sp.join()
 
     def pub_real_angles(self):
+        """Publish real angle"""
+        """发布真实角度"""
         pub = rospy.Publisher("mycobot/angles_real", MycobotAngles, queue_size=5)
         ma = MycobotAngles()
         while not rospy.is_shutdown():
@@ -129,6 +133,8 @@ class MycobotTopics(object):
             time.sleep(0.25)
 
     def pub_real_coords(self):
+        """publish real coordinates"""
+        """发布真实坐标"""
         pub = rospy.Publisher("mycobot/coords_real", MycobotCoords, queue_size=5)
         ma = MycobotCoords()
 
@@ -147,6 +153,8 @@ class MycobotTopics(object):
             time.sleep(0.25)
 
     def sub_set_angles(self):
+        """subscription angles"""
+        """订阅角度"""
         def callback(data):
             angles = [
                 data.joint_1,
@@ -165,6 +173,8 @@ class MycobotTopics(object):
         rospy.spin()
 
     def sub_set_coords(self):
+        """Subscribe to coordinates"""
+        """订阅坐标"""
         def callback(data):
             angles = [data.x, data.y, data.z, data.rx, data.ry, data.rz]
             sp = int(data.speed)
@@ -177,6 +187,8 @@ class MycobotTopics(object):
         rospy.spin()
 
     def sub_gripper_status(self):
+        """Subscribe to Gripper Status"""
+        """订阅夹爪状态"""
         def callback(data):
             if data.Status:
                 self.mc.set_gripper_state(0, 80)

@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*
 import time
 import rospy
@@ -7,6 +7,8 @@ import fcntl
 from mycobot_communication.srv import *
 
 from pymycobot.mycobot import MyCobot
+
+from sensor_msgs.msg import JointState
 
 mc = None
 lock_name = None
@@ -52,7 +54,7 @@ def release(lock_file_fd):
 
 def create_handle():
     global mc, lock_name
-    rospy.init_node("mycobot_services")
+    rospy.init_node("mycobot_services_getter", anonymous=True)
     rospy.loginfo("start ...")
     port = rospy.get_param("~port")
     baud = rospy.get_param("~baud")
@@ -63,12 +65,8 @@ def create_handle():
 
 
 def create_services():
-    rospy.Service("set_joint_angles", SetAngles, set_angles)
     rospy.Service("get_joint_angles", GetAngles, get_angles)
-    rospy.Service("set_joint_coords", SetCoords, set_coords)
     rospy.Service("get_joint_coords", GetCoords, get_coords)
-    rospy.Service("switch_gripper_status", GripperStatus, switch_status)
-    rospy.Service("switch_pump_status", PumpStatus, toggle_pump)
     rospy.loginfo("ready")
     rospy.spin()
 
@@ -136,75 +134,6 @@ def get_coords(req):
         return GetCoordsResponse(*coords)
 
 
-def switch_status(req):
-    """Gripper switch status"""
-    """夹爪开关状态"""
-    if mc:
-        lock = acquire(lock_name)
-        if req.Status:
-            mc.set_gripper_state(0, 80)
-        else:
-            mc.set_gripper_state(1, 80)
-        release(lock)
-
-    return GripperStatusResponse(True)
-
-
-def toggle_pump(req):
-    if mc:
-        lock = acquire(lock_name)
-        if req.Status:
-            mc.set_basic_output(2, 0)
-            mc.set_basic_output(5, 0)
-        else:
-            mc.set_basic_output(2, 1)
-            mc.set_basic_output(5, 1)
-        release(lock)
-
-
-    return PumpStatusResponse(True)
-
-# Joint command callback function
-def joint_callback(data):
-    """
-    Callback function for joint command subscriber
-    """
-    if mc:
-        lock = acquire(lock_name)
-        try:
-            # Get joint positions from the message
-            joint_positions = list(data.position)
-
-            # Ensure we have 6 joint values
-            if len(joint_positions) >= 6:
-                # Extract the first 6 joint values
-                angles = joint_positions[:6]
-                # Set movement speed (you can adjust this value)
-                speed = 50
-
-                # Send angles to robot
-                mc.send_angles(angles, speed)
-
-        except Exception as e:
-            rospy.logerr("Error in joint_callback:"+{str(e)})
-        finally:
-            release(lock)
-
-def create_services_and_subscribers():
-    # Create services
-    rospy.Service("set_joint_angles", SetAngles, set_angles)
-    rospy.Service("get_joint_angles", GetAngles, get_angles)
-    rospy.Service("set_joint_coords", SetCoords, set_coords)
-    rospy.Service("get_joint_coords", GetCoords, get_coords)
-    rospy.Service("switch_gripper_status", GripperStatus, switch_status)
-    rospy.Service("switch_pump_status", PumpStatus, toggle_pump)
-
-    # Create joint command subscriber
-    rospy.Subscriber("joint_command", JointState, joint_callback, queue_size=1)
-
-    rospy.loginfo("Services and subscribers are ready")
-    rospy.spin()
-
 robot_msg = """
 MyCobot Status
 --------------------------------
@@ -255,5 +184,4 @@ if __name__ == "__main__":
     # print(MyCobot.__dict__)
     create_handle()
     output_robot_message()
-    # create_services()
-    create_services_and_subscribers()
+    create_services()
