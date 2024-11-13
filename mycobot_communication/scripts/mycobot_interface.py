@@ -159,7 +159,7 @@ class MycobotInterface(object):
     def set_servo_cb(self, req):
         if req.data:
             self.lock.acquire()
-            self.mc.send_angles(self.real_angles, 0)
+            self.mc.send_angles(self.real_angles, 1)
             self.lock.release()
             self.servo_on = True
             rospy.loginfo("servo on")
